@@ -20,6 +20,8 @@ Imports:
     KernSmooth,
     fields,
     splus2R,
-    wmtsa
+    wmtsa,
+    flowViz,
+    lattice
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
