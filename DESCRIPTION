@@ -1,0 +1,25 @@
+Package: wadeTools
+Type: Package
+Title: Wade's Hodgepodge of Flow Cytometry Functions
+Version: 0.1.0
+Author: Wade Rogers
+Maintainer: Wade Rogers <wade.rogers@spcytomics.com>
+Description: This is a collection of functions primarily useful to participants
+    in the Cytomics Workshop.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+biocViews:
+Depends: 
+    R (>= 3.4.0),
+    flowCore (>= 1.42.0)
+RoxygenNote: 7.0.2
+Imports: 
+    flowFP,
+    KernSmooth,
+    fields,
+    splus2R,
+    wmtsa
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
