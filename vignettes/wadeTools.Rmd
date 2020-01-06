@@ -1,0 +1,135 @@
+---
+title: "Getting Started with wadeTools"
+author: "Wade Rogers"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  knitr.kable.NA = '',
+  comment = "#>"
+)
+```
+
+```{r eval=TRUE, echo=FALSE, message=FALSE}
+# load some libraries early to suppress messages for the vignette
+library(flowCore)
+library(flowViz)
+library(splancs)
+library(sp)
+library(KernSmooth)
+```
+
+## Purpose of this package
+The ***wadeTools*** package is a collection of a wide variety of R functions that I've written over the years.  They accomplish big or small tasks that I find that I do over and over again, so as in any software development work, it makes sense to write it once (carefully and with an eye towards re-useability) and use it often.  
+
+I had originally created a 'tools' directory which had task-specific subdirectories (e.g. visualization, compensation, transformation, etc.).  Any time I found I had a function that seemed to have broader utility than just the project at hand, I dumped it into the tools hierarchy.  Over time functions and categories accumulated.  Mostly these had to do specifically with flow cytometry data processing, but a few didn't.
+
+I've only recently turned this collection into a formal R package.  Why?  Because I wanted to share these tools with Cytomics Workshop participants - people who are interested in acquiring or honing  skills in developing and applying advanced computational analysis methods for flow cytometry.  In earlier iterations of the workshop I simply shared the tools directory.  That's akin to dumping a box of random tools on the workbench and asking you to build a table, with no *a priori* knowledge of what a plane, or a saw, or a chisel was used for, and how to use them.  A package has several monumental advantages over this *ad hoc* approach to sharing code:
+
+1.  it's easy to distribute via Github,
+1.  each function is documented with a help page that shows its arguments and usage, and in many cases examples of its use,
+1.  it comes with this vignette - essentially a cook's tour of the package and how to get started with it.
+
+## Roadmap of functions
+First, here's a table of functions exported by the package (there are many more "helper" functions that aren't intended to be exposed to the user but provide capabilities for the public exported functions).  I've organized these public functions into categories (e.g. reading, processing, compensation, etc.), and highlighted the ones I find I use the most often in **bold**.  Consider this table to be a sort of "roadmap" to what's available.
+
+```{r, echo=FALSE, results='asis'}
+tfunc = read.csv("table_of_functions.csv")
+knitr::kable(tfunc)
+```
+
+## A simple example
+Let's illustrate the use of the package with a simple example.  Let's take a look at a single FCS file, which may be one of many files in a project.  But for now, just consider this one file (we'll look at collections of files in a little bit).  We will:
+
+* read the file
+* compensate
+* transform
+* look at a couple of pictures
+
+We'll do this 2 ways.  First, using standard $flowCore$ functions, and second, using $wadeTools$.  We'll retrieve the filename of the example data first, which we'll use for both methods:
+```{r eval=TRUE, echo=TRUE}
+filename = system.file("extdata", "Tphe09943-012-00_H1_R.fcs", package = "wadeTools")
+```
+
+### flowCore method
+```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
+ff = read.FCS(filename)
+
+# get the spillover matrix from the header
+spill = keyword(ff)$SPILL
+ff = compensate(ff, spillover = spill)
+
+# apply the flowCore default biexponential transformation
+bt = biexponentialTransform()
+fft = transform(ff, transformList(colnames(ff)[7:22], bt))
+
+# make a couple of pictures
+plot(fft, c("FSC-A", "SSC-A"), main = "Scattering")
+plot(fft, c("Green D 610/20-A", "Violet B 705/70-A"), main = "CD4/CD8")
+```
+
+### wadeTools method
+```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
+library(wadeTools)
+filename = system.file("extdata", "Tphe09943-012-00_H1_R.fcs", package = "wadeTools")
+ff = get_sample(fn = filename, verbose = TRUE)
+
+# make a couple of pictures
+pplot(ff, c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear', main = "Scattering")
+pplot(ff, c("CD4PETR", "CD8Q705"), main = "CD4/CD8")
+```
+
+The function $get_sample()$ does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
+
+So, not only is the $wadeTools$ approach much simpler from a code perspective, the result is a bit nicer (IMHO).
+
+## Next, the simple task of pre-gating
+It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting.  Thus, even though we'd like to think that gating is a thing of the past, it's not.
+
+Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data.  We'll use that term to distinguish what we're doing here from a conventional hierachical gating analysis, where the analyst specifies analytical gates, and counts events inside those gates as the primary means of characterizing a sample.
+
+What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention.  Having accomplished this, we will persist the result of this *pre-gating* (that's a computer geek way of saying, "we will save the results as, say, gated FCS files") for further downstream processing via your clustering algorithm of choice.
+
+All that said, let's see if we can find lymphocytes.
+
+```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
+# first get rid of debris, which can confuse blob.boundary
+tmp = Subset(ff, rectangleGate("FSC-A" = c(.5, Inf), "SSC-A" = c(.5, Inf)))
+bb = blob.boundary(ff = tmp, parameters = c("FSC-A", "SSC-A"), location = c(2, 1), height = .5, convex = TRUE)
+
+pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
+lines(bb)    # draw the blob contour on top of the figure
+
+# check how many events are inside the gate
+ff_gated = Subset(ff, polygonGate(.gate = bb))
+nrow(ff)
+nrow(ff_gated)
+```
+
+$blob.boundary()$ is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified $convex = TRUE$, and $height = .5$, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+
+If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
+```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
+bb_inflated = inflate.contour(bb, dist = 0.25)
+pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
+lines(bb)                                   # the original contour, in black
+lines(bb_inflated, lwd = 3, col = 'red')    # the inflated contour, in red and heavy
+
+# re-gate
+ff_gated = Subset(ff, polygonGate(.gate = bb_inflated))
+
+# re-count gated events
+nrow(ff_gated)
+
+# note that the number of gated events rose from 128k to 187k
+```
+
+
+
