@@ -59,6 +59,7 @@ close.contour = function (blob) {
 #' @description find the convex hull of a polygon
 #' @param blob A polygon, for example the result of blob.boundary()
 #' @return Another polygon
+#' @export
 get.hull <- function (blob) {
   # 2018-08-27 WTR - handle edge case that blob is a single point
   if (is.vector(blob)) {
@@ -91,6 +92,7 @@ get.hull <- function (blob) {
 #' @param dist The distance by which to expand the blob
 #' @return Another polygon
 #' @details The input blob should be convex.  You can use get.hull() first if you're not sure.
+#' @export
 inflate.contour <- function (blob, dist) {
   require("splancs")
   x <- blob[,1]
@@ -123,6 +125,7 @@ inflate.contour <- function (blob, dist) {
 #' @param npts The number of points used in smoothing.  The larger the number
 #' the smoother the result.
 #' @return Another polygon
+#' @export
 smooth.contour <- function (blob, npts=5) {
   require("splancs")
   x <- blob[,1]
@@ -219,6 +222,7 @@ cont2mat = function (cont, param) {
 #' @param blob A polygon, for example the result of blob.boundary()
 #' @return The area of the polygon.
 #' @details See http://stackoverflow.com/questions/16285134/calculating-polygon-area.
+#' @export
 polygon.area = function(blob) {
   if (!is.matrix(blob)) {blob = cont2mat(blob, param=c("x", "y"))}
 
@@ -242,6 +246,7 @@ polygon.area = function(blob) {
 #' @return The convexity of the polygon.
 #' @details Convexity is defined as the ratio of the area of a polygon to the area
 #' of its convex hull.  A convex polygon thus has a convexity of 1.0.
+#' @export
 polygon.convexity = function(blob) {
   a1 = polygon.area(blob)
   a2 = polygon.area(get.hull(blob))

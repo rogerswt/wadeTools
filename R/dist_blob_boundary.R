@@ -119,7 +119,7 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 	    prev = out
 	    cont <- contourLines(kde$x1, kde$x2, kde$fhat, levels = h)
 	    out = nearest_contour(cont, location, parameters)
-	    cx = polygon_convexity(out)
+	    cx = polygon.convexity(out)
 	    #DEBUG: cat("h =", h, ", convexity =", cx, "\n")
 	    if (cx < 1.0 - tol) {
 	      out = prev

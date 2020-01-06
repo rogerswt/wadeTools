@@ -32,19 +32,23 @@
 get_sample = function(fn, compensate=TRUE, transform=TRUE, derail=TRUE, nice.names = TRUE, verbose=FALSE) {
 
   ff = read.FCS(fn)
+  if (verbose) {message("reading")}
   fl_params = which(flowCore::colnames(ff) %in% colnames(keyword(ff)$SPILL))
   sc_params = which(grepl(pattern = "FSC", x = flowCore::colnames(ff)) | grepl(pattern = "SSC", x = flowCore::colnames(ff)))
 
-  if (compensate) {ff = autocomp(ff)}
+  if (compensate) {if (verbose) {message("compensating")}; ff = autocomp(ff)}
 
   if (derail) {
+    if (verbose) {message("derailing")}
     ff = derail(ff = ff, parameters = c("FSC-A", "SSC-A"))
   }
   if (transform) {
+    if (verbose) {message("transforming")}
     ff = doTransform(ff, cols = sc_params, method = 'linear')
     ff = doTransform(ff, cols = fl_params, method = 'biexp')
   }
   if (nice.names) {
+    if (verbose) {message("nice names")}
     dnames = flowCore::colnames(ff)    # detector names
 
     names = parameters(ff)$desc
