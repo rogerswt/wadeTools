@@ -31,9 +31,10 @@ The ***wadeTools*** package is a collection of a wide variety of R functions tha
 
 I had originally created a 'tools' directory which had task-specific subdirectories (e.g. visualization, compensation, transformation, etc.).  Any time I found I had a function that seemed to have broader utility than just the project at hand, I dumped it into the tools hierarchy.  Over time functions and categories accumulated.  Mostly these had to do specifically with flow cytometry data processing, but a few didn't.
 
-I've only recently turned this collection into a formal R package.  Why?  Because I wanted to share these tools with Cytomics Workshop participants - people who are interested in acquiring or honing  skills in developing and applying advanced computational analysis methods for flow cytometry.  In earlier iterations of the workshop I simply shared the tools directory.  That's akin to dumping a box of random tools on the workbench and asking you to build a table, with no *a priori* knowledge of what a plane, or a saw, or a chisel was used for, and how to use them.  A package has several monumental advantages over this *ad hoc* approach to sharing code:
+I've only recently turned this collection into a formal R package.  Why?  Because I wanted to share these tools with **Cytomics Workshop** participants - people who are interested in acquiring or honing  skills in developing and applying advanced computational analysis methods for flow cytometry.  In earlier iterations of the workshop I simply shared the tools directory.  That's akin to dumping a box of random tools on the workbench and asking you to build a table, with no *a priori* knowledge of what a plane, or a saw, or a chisel was used for, or how to use them.  A package has several monumental advantages over this *ad hoc* approach to sharing code:
 
 1.  it's easy to distribute via Github,
+1.  it installs and loads just like any other R package,
 1.  each function is documented with a help page that shows its arguments and usage, and in many cases examples of its use,
 1.  it comes with this vignette - essentially a cook's tour of the package and how to get started with it.
 
@@ -49,9 +50,9 @@ knitr::kable(tfunc)
 Let's illustrate the use of the package with a simple example.  Let's take a look at a single FCS file, which may be one of many files in a project.  But for now, just consider this one file (we'll look at collections of files in a little bit).  We will:
 
 * read the file
-* compensate
-* transform
-* look at a couple of pictures
+* compensate the data using the SPILL matrix in the FCS header
+* transform the data biexponentially
+* take a look at a couple of pictures
 
 We'll do this 2 ways.  First, using standard **flowCore** functions, and second, using **wadeTools**.  We'll retrieve the filename of the example data first, which we'll use for both methods:
 ```{r eval=TRUE, echo=TRUE}
@@ -83,14 +84,18 @@ ff = get_sample(fn = filename, verbose = TRUE)
 
 # make a couple of pictures
 pplot(ff, c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear', main = "Scattering")
-pplot(ff, c("CD4PETR", "CD8Q705"), main = "CD4/CD8")
+pplot(ff, c("CD4PETR", "CD8Q705"), 
+      xlim = bx(c(-1000, 2^18)), ylim = bx(c(-1000, 2^18)), 
+      main = "CD4/CD8")
 ```
 
-The function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
+The function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  
+
+Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
 
 So, not only is the **wadeTools** approach much simpler from a code perspective, the result is a bit nicer (IMHO).
 
-## Next, the simple task of pre-gating
+## Next, a simple pre-gating task 
 It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting.  Thus, even though we'd like to think that gating is a thing of the past, it's not.
 
 Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data.  We'll use that term to distinguish what we're doing here from a conventional hierachical gating analysis, where the analyst specifies analytical gates, and counts events inside those gates as the primary means of characterizing a sample.
@@ -132,4 +137,14 @@ nrow(ff_gated)
 ```
 
 ## more to come
+fancier pre-gating, with clean.fp
+
+work on collections (flowSets)
+
+add phenoData from spreadsheets
+
+draw custom graphs using bx()
+
+
+
 
