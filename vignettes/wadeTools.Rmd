@@ -89,11 +89,13 @@ pplot(ff, c("CD4PETR", "CD8Q705"),
       main = "CD4/CD8")
 ```
 
-The function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  
+Comparing the two methods, the **wadeTools** approach accomplishes all of the work in a single line of code, using **get_sample()**. The **flowCore** approach on the other hand requires several lines, and requires that the user master (and remember) the somewhat arcane syntax of the transform methodology.  **flowCore** also has fairly primitive default graphics.
 
-Compare the two sets of figures, and you'll notice that the labels of fluorescence parameters in the **wadeTools** version is a lot more user-friendly than the default labeling with **flowCore**.  You'll also notice that the rendering of the distributions is a lot more like what you're accustomed to looking at (especially if you're a FlowJo user).  You will also note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
+In **wadeTools**, the function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Of course, inside this function there's lots going on, but the nice thing is that's kind of hidden from you and you needn't worry about it on a day-to-day basis.  And if you *do* want to worry about it you can always consult the source code!
 
-So, not only is the **wadeTools** approach much simpler from a code perspective, the result is a bit nicer (IMHO).
+Compare the two sets of figures and you'll notice that the labeling of fluorescence parameters in the **wadeTools** version is a lot more user-friendly than the default labeling with **flowCore**.  You'll also notice that the rendering of the distributions is a lot more like what you're accustomed to looking at (especially if you're a FlowJo user).  You will also note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations" (this really just means that the default parameters of the flowCore biexp are poorly chosen).  **This is a warning to be careful that your transformation makes sense.**
+
+So, not only is the **wadeTools** approach much simpler from a code perspective, the result is quite a bit nicer (IMHO).
 
 ## Next, a simple pre-gating task 
 It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting.  Thus, even though we'd like to think that gating is a thing of the past, it's not.
@@ -116,11 +118,13 @@ lines(bb)    # draw the blob contour on top of the figure
 ff_gated = Subset(ff, polygonGate(.gate = bb))
 nrow(ff)
 nrow(ff_gated)
+
+# Out of the 452k events in the original file, 128k are inside the blob boundary
 ```
 
 **blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
 
-You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**.
+You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**!
 
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
@@ -135,8 +139,11 @@ ff_gated = Subset(ff, polygonGate(.gate = bb_inflated))
 # re-count gated events
 nrow(ff_gated)
 
-# note that the number of gated events rose from 128k to 187k
+# note that the number of gated events rose from 128k to 187k due to the fact
+# that the gate is bigger, and thus encircles more events
 ```
+
+This is often a useful generalization of **blob.boundary**, since it's pretty hard to find the outer limits of blobs.
 
 ## more to come
 fancier pre-gating, with clean.fp
