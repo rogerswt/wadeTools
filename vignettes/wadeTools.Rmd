@@ -23,6 +23,7 @@ library(flowCore)
 library(flowViz)
 library(splancs)
 library(sp)
+library(fields)
 library(KernSmooth)
 library(wadeTools)
 ```
@@ -107,11 +108,15 @@ All that said, let's see if we can find the lymphocytes in our example file:
 
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
 # first get rid of debris, which can confuse blob.boundary
-tmp = Subset(ff, rectangleGate("FSC-A" = c(.5, Inf), "SSC-A" = c(.5, Inf)))
+thresh_debris_fsc = 0.25
+thresh_debris_ssc = 0.25
+tmp = Subset(ff, rectangleGate("FSC-A" = c(thresh_debris_fsc, Inf), "SSC-A" = c(thresh_debris_ssc, Inf)))
 bb = blob.boundary(ff = tmp, parameters = c("FSC-A", "SSC-A"), location = c(2, 1), height = .5, convex = TRUE)
 
 pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
 lines(bb)    # draw the blob contour on top of the figure
+xline(thresh_debris_fsc, lty = 'dotdash')   # show the debris thresholds
+yline(thresh_debris_ssc, lty = 'dotdash')
 
 # check how many events are inside the gate
 ff_gated = Subset(ff, polygonGate(.gate = bb))
@@ -144,8 +149,128 @@ nrow(ff_gated)
 
 Inflating is often a useful adjunct to **blob.boundary**, since it's pretty hard to find the outer limits of blobs.
 
+## A More Complete Pre-gating Workflow
+Let's now go back and design a complete pre-gating workflow for our example data file^[Please  note that this example file is a downsampled version (due to size constraints) of a data file in a FlowRepository project.  The original full dataset can be obtained from [FlowRepository](https://flowrepository.org/id/FR-FCM-ZZGS).  These data are too large to be included in an R package, but I encourage you to download the full dataset and explore these ideas on the real data.  I also **strongly recommend** using [FlowRepositoryR](http://bioconductor.org/packages/release/bioc/html/FlowRepositoryR.html) to download the data.].
+
+Here is the flowFrame we imported using **get_sample()**:
+```{r, eval = TRUE, echo = TRUE}
+pData(parameters(ff))[, 1:2]
+```
+This looks like a T cell panel, but in order not to miss the NK and NKT cells we'll not pre-gate on CD3, but rather will save it as an analytical parameter.  Thus, a reasonable gating strategy might be as follows:
+
+1. Eliminate non-stationary acquisition (**clean.fp()**)
+1. Eliminate non-singlet events (using scattering -H and -W)
+1. Keep the lymphocytes (using FSC-A and SSC-A)
+1. Eliminate dead cells (using the LIVEDEAD marker)
+
+##### Gate 1: Stationary acquisition
+
+```{r, eval = TRUE, echo = TRUE, fig.width=7, fig.height=7}
+# I will select SSC-A plus one parameter from each laser.
+params = c("SSC-A", "KI67FITC", "CD127BV421", "CCR4AF647", "PD1PE")
+
+# tag events in "bad" slices
+tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
+
+# filter out the events in "bad" slices
+ff_clean = Subset(tmp, rectangleGate("clean" = c(0.5, Inf)))
+
+# summarize how much we lost
+no = nrow(ff)
+nc = nrow(ff_clean)
+nd = no - nc
+sprintf("eliminating %d events in bad slices (%.1f%%)", nd, 100 * nd / no)
+
+```
+
+##### Gate 2: Singlets
+There are lots of ideas on how to do this.  Here's one:
+```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
+###################
+# FSC singlets
+###################
+pplot(ff_clean, c("FSC-H", "FSC-W"), tx = 'linear', ty = 'linear')
+bb = blob.boundary(ff, parameters = c("FSC-H", "FSC-W"), height = .1, strongest = TRUE)
+bb = get.hull(bb)                      # convex hull of bb
+bb_infl = inflate.contour(bb, dist = .1)    # inflate a bit
+fscw_thresh = max(bb_infl[, 2])             # col 2 is FSC-W
+lines(bb)
+lines(bb_infl, lwd = 2)
+yline(fscw_thresh, lwd = 2, lty = 'dotdash', col = 'red')
+ff_sing1 = Subset(ff_clean, rectangleGate("FSC-W" = c(-Inf, fscw_thresh)))
+
+
+###################
+# SSC singlets
+###################
+pplot(ff_sing1, c("SSC-H", "SSC-W"), tx = 'linear', ty = 'linear')
+bb = blob.boundary(ff, parameters = c("SSC-H", "SSC-W"), height = .1, strongest = TRUE)
+bb = get.hull(bb)                      # convex hull of bb
+bb_infl = inflate.contour(bb, dist = .1)    # inflate a bit
+fscw_thresh = max(bb_infl[, 2])             # col 2 is SSC-W
+lines(bb)
+lines(bb_infl, lwd = 2)
+yline(fscw_thresh, lwd = 2, lty = 'dotdash', col = 'red')
+ff_sing2 = Subset(ff_sing1, rectangleGate("SSC-W" = c(-Inf, fscw_thresh)))
+
+# summarize how much we lost
+no = nrow(ff_clean)
+nc = nrow(ff_sing2)
+nd = no - nc
+sprintf("eliminating %d non-singlet events (%.1f%%)", nd, 100 * nd / no)
+```
+
+#####Gate 3: Lymphocytes
+```{r, eval = TRUE, echo = TRUE, fig.width=7, fig.height=7}
+
+# we'll do this just like in the earlier example
+thresh_debris_fsc = 0.25
+thresh_debris_ssc = 0.25
+tmp = Subset(ff_sing2, rectangleGate("FSC-A" = c(thresh_debris_fsc, Inf), "SSC-A" = c(thresh_debris_ssc, Inf)))
+bb = blob.boundary(ff = tmp, parameters = c("FSC-A", "SSC-A"), location = c(2, 1), height = .5, convex = TRUE)
+bb_inflated = inflate.contour(bb, dist = 0.25)
+
+pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
+lines(bb)    # draw the blob contour on top of the figure
+lines(bb_inflated, lwd = 3, col = 'red')    # the inflated contour, in red and heavy
+
+xline(thresh_debris_fsc, lty = 'dotdash')   # show the debris thresholds
+yline(thresh_debris_ssc, lty = 'dotdash')
+
+ff_lymph = Subset(ff_sing2, polygonGate(.gate = bb_inflated))
+
+```
+
+#####Gate 4: Live events
+```{r, eval = TRUE, echo = TRUE, fig.width=7, fig.height=7}
+# We will illustrate the use of Kernel Density Estimation of 1D probability distributions
+# to find a LIVEDEAD threshold
+kde = bkde(exprs(ff_lymph)[, "LIVEDEAD"], bandwidth = 0.05)   # bkde is from package KernSmooth
+kde = normalize.kde(kde)
+
+# find valley(s)
+res = find.local.minima(kde)
+
+# if more than one minimum, find the lowest one above, say, 2000 on the LIVEDEAD axis
+thresh_ld = res$x[min(which(res$x > bx(2000)))]
+
+ff_gated = Subset(ff_lymph, rectangleGate("LIVEDEAD" = c(-Inf, thresh_ld)))
+
+# visualize
+pplot(ff_lymph, c("LIVEDEAD", "SSC-A"), ty = 'linear')
+lines(kde$x, 5 * kde$y)     # factor of 5 just for visual appeal
+xline(res$x, lty = 'dotdash')                # show all minima we found
+xline(thresh_ld, lwd = 3, col = 'red')  # show the one we picked
+
+# summarize how much we lost
+no = nrow(ff_lymph)
+nc = nrow(ff_gated)
+nd = no - nc
+sprintf("eliminating %d dead events (%.1f%%)", nd, 100 * nd / no)
+```
+
+
 ## more to come
-fancier pre-gating, with clean.fp
 
 work on collections (flowSets)
 
