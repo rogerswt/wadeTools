@@ -16,3 +16,12 @@ I've only recently turned this collection into a formal R package.  Why?  Becaus
 1.  it installs and loads just like any other R package,
 1.  each function is documented with a help page that shows its arguments and usage, and in many cases examples of its use,
 1.  it comes with this vignette - essentially a cook's tour of the package and how to get started with it.
+
+That said, anyone is free to grab this package and use it, if you find it useful in your work.  If you do, please drop me a note!  If you use it in a publication, please acknowledge.
+
+Cheers,
+Wade
+
+[Wade Rogers](mailto:wade.rogers@spcytomics.com)
+
+[Still Pond Cytomics](https://spcytomics.com)
