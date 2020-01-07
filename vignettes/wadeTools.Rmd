@@ -100,7 +100,7 @@ It is often (always?) the case that raw data needs to be pre-gated prior to *any
 
 Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data.  We'll use that term to distinguish what we're doing here from a conventional hierachical gating analysis, where the analyst specifies analytical gates, and counts events inside those gates as the primary means of characterizing a sample.
 
-What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention.  Having accomplished this, we will persist the result of this *pre-gating* (that's a computer geek way of saying, "we will save the results as, say, gated FCS files") for further downstream processing via your clustering algorithm of choice.
+What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention and (c) do it reproducibly.  Having accomplished this, we will persist the result of this *pre-gating* (that's a computer geek way of saying, "we will save the results as, say, gated FCS files") for further downstream processing via your clustering algorithm of choice.
 
 All that said, let's see if we can find lymphocytes.
 
