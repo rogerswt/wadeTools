@@ -91,7 +91,7 @@ pplot(ff, c("CD4PETR", "CD8Q705"),
 
 The function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  
 
-Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
+Compare the two sets of figures, and you'll notice that the labels of fluorescence parameters in the **wadeTools** version is a lot more user-friendly than the default labeling with **flowCore**.  You'll also notice that the rendering of the distributions is a lot more like what you're accustomed to looking at (especially if you're a FlowJo user).  You will also note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
 
 So, not only is the **wadeTools** approach much simpler from a code perspective, the result is a bit nicer (IMHO).
 
