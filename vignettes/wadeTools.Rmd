@@ -57,7 +57,7 @@ Let's illustrate the use of the package with a simple example.  Let's take a loo
 
 We'll do this 2 ways.  First, using standard **flowCore** functions, and second, using **wadeTools**.  We'll retrieve the filename of the example data first, which we'll use for both methods:
 ```{r eval=TRUE, echo=TRUE}
-filename = system.file("extdata", "Tphe25251_RC_-155-04_A3_A03.fcs", package = "wadeTools")
+filename = system.file("extdata", "example1.fcs", package = "wadeTools")
 ```
 
 ##### flowCore method
