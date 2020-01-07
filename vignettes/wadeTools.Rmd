@@ -53,7 +53,7 @@ Let's illustrate the use of the package with a simple example.  Let's take a loo
 * transform
 * look at a couple of pictures
 
-We'll do this 2 ways.  First, using standard $flowCore$ functions, and second, using $wadeTools$.  We'll retrieve the filename of the example data first, which we'll use for both methods:
+We'll do this 2 ways.  First, using standard **flowCore** functions, and second, using **wadeTools**.  We'll retrieve the filename of the example data first, which we'll use for both methods:
 ```{r eval=TRUE, echo=TRUE}
 filename = system.file("extdata", "Tphe09943-012-00_H1_R.fcs", package = "wadeTools")
 ```
@@ -86,9 +86,9 @@ pplot(ff, c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear', main = "Scattering"
 pplot(ff, c("CD4PETR", "CD8Q705"), main = "CD4/CD8")
 ```
 
-The function $get_sample()$ does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
+The function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Compare the two sets of figures, and you'll note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations".  **This is a warning to be careful that your transformation makes sense.**
 
-So, not only is the $wadeTools$ approach much simpler from a code perspective, the result is a bit nicer (IMHO).
+So, not only is the **wadeTools** approach much simpler from a code perspective, the result is a bit nicer (IMHO).
 
 ## Next, the simple task of pre-gating
 It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting.  Thus, even though we'd like to think that gating is a thing of the past, it's not.
@@ -113,7 +113,7 @@ nrow(ff)
 nrow(ff_gated)
 ```
 
-$blob.boundary()$ is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified $convex = TRUE$, and $height = .5$, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
 
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
@@ -131,5 +131,5 @@ nrow(ff_gated)
 # note that the number of gated events rose from 128k to 187k
 ```
 
-
+## more to come
 
