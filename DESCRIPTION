@@ -1,7 +1,7 @@
 Package: wadeTools
 Type: Package
 Title: Wade's Hodgepodge of Flow Cytometry Functions
-Version: 0.1.0
+Version: 0.2.0
 Author: Wade Rogers
 Maintainer: Wade Rogers <wade.rogers@spcytomics.com>
 Description: This is a collection of functions primarily useful to participants
