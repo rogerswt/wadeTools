@@ -100,9 +100,9 @@ It is often (always?) the case that raw data needs to be pre-gated prior to *any
 
 Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data.  We'll use that term to distinguish what we're doing here from a conventional hierachical gating analysis, where the analyst specifies analytical gates, and counts events inside those gates as the primary means of characterizing a sample.
 
-What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention and (c) do it reproducibly.  Having accomplished this, we will persist the result of this *pre-gating* (that's a computer geek way of saying, "we will save the results as, say, gated FCS files") for further downstream processing via your clustering algorithm of choice.
+What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention and (c) do it reproducibly.  Having accomplished this, we will persist the result of this *pre-gating* for further downstream processing via your clustering algorithm of choice (that's a computer geek way of saying, "we will save the results as, say, gated FCS files").
 
-All that said, let's see if we can find lymphocytes.
+All that said, let's see if we can find the lymphocytes:
 
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
 # first get rid of debris, which can confuse blob.boundary
@@ -119,6 +119,8 @@ nrow(ff_gated)
 ```
 
 **blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+
+You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**.
 
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
