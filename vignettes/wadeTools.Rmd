@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   knitr.kable.NA = '',
-  comment = "#>"
+  comment = ""
 )
 ```
 
@@ -57,7 +57,7 @@ Let's illustrate the use of the package with a simple example.  Let's take a loo
 
 We'll do this 2 ways.  First, using standard **flowCore** functions, and second, using **wadeTools**.  We'll retrieve the filename of the example data first, which we'll use for both methods:
 ```{r eval=TRUE, echo=TRUE}
-filename = system.file("extdata", "Tphe09943-012-00_H1_R.fcs", package = "wadeTools")
+filename = system.file("extdata", "Tphe25251_RC_-155-04_A3_A03.fcs", package = "wadeTools")
 ```
 
 ##### flowCore method
@@ -79,7 +79,7 @@ plot(fft, c("Green D 610/20-A", "Violet B 705/70-A"), main = "CD4/CD8")
 
 ##### wadeTools method
 ```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
-ff = get_sample(fn = filename, verbose = TRUE)
+ff = get_sample(fn = filename)
 
 # make a couple of pictures
 pplot(ff, c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear', main = "Scattering")
@@ -99,9 +99,9 @@ So, not only is the **wadeTools** approach much simpler from a code perspective,
 ## Next: a simple pre-gating task 
 It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting. It's important to get rid of the junk so that it doesn't bias or confuse downstream algorithms (being careful not to through out the baby with the bath water!). Thus, even though we'd like to think that gating as a thing of the past, it's not.
 
-Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data (get rid of the bath water, keep the baby).  We'll use that term to distinguish what we're doing here from a conventional gating analysis, where the analyst specifies analytical gates that define all populations of interest, counting events inside those gates as the primary means of characterizing a sample and ignoring any events not in any of the analytical gates.  Of course you will recognize this as "hypothesis-driven" data analysis, where the gates define all hypotheses to be tested.  Pre-gating is a preliminary step towards clustering analysis, which represents an "hypothesis-generating" approach.
+Here, we'll talk about *pre-gating*, which is a cleanup step prior to clustering or some other means of computationally analyzing the data (get rid of the bath water, keep the baby).  We'll use that term to distinguish what we're doing here from a conventional gating analysis, where the analyst specifies analytical gates that define all populations of interest, counting events inside those gates as the primary means of characterizing a sample and ignoring any events not in any of the analytical gates.  Of course, you will recognize this as "hypothesis-driven" data analysis, where the gates define all hypotheses to be tested.  Pre-gating is a preliminary step towards clustering analysis, which represents an "hypothesis-generating" approach.
 
-What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, and (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention and (c) do it reproducibly.  Having accomplished this, we will persist the result of this *pre-gating* for further downstream processing via your clustering algorithm of choice (that's a computer geek way of saying, "we will save the results as, say, gated FCS files").
+What we aim to do is to create *algorithmic gates* that recognize and follow populations as they wander through multivariate space due to instrument or staining variability.  Our goal is to (a) find major populations in an unbiased fashion, (b) do it automatically, so it can be applied to 100's or 1000's of files without user intervention and (c) do it reproducibly.  Having accomplished this, we will persist the result of this *pre-gating* for further downstream processing via your clustering algorithm of choice (that's a computer geek way of saying, "we will save the results as, say, gated FCS files").
 
 All that said, let's see if we can find the lymphocytes in our example file:
 
@@ -121,9 +121,9 @@ nrow(ff_gated)
 # Out of the 452k events in the original file, 128k are inside the blob boundary
 ```
 
-**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left, at about c(0.75, 0.75).  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
 
-You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**!
+You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE, or log.transform to TRUE or FALSE (see the help page for **blob.boundary()**), and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**!
 
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
