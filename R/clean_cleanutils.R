@@ -113,6 +113,10 @@ find.bad.slices = function (fs, parameters=NULL, qcfac = 1.25, show=FALSE) {
 #' @export
 clean.fp = function (ff, parameters=NULL, nbin=96, show=FALSE) {
   require (fields)   # yline
+
+  # preserve pData to restore on output
+  pdata = pData(parameters(ff))
+
   res1 = time.slice (ff, nbin)
   fs = res1$fs
   bin.indices = res1$bin.indices
@@ -135,7 +139,6 @@ clean.fp = function (ff, parameters=NULL, nbin=96, show=FALSE) {
   }
   tmpmat = exprs(ff)
   tmpmat = cbind (tmpmat, clean=gb)
-  pdata = pData(parameters(ff))
   # add one to the last $P
   max_rowname = rownames(pdata)[nrow(pdata)]
   max_rowname = as.numeric(sub(pattern = "$P", replacement = "", x = max_rowname, fixed = TRUE))
@@ -145,7 +148,6 @@ clean.fp = function (ff, parameters=NULL, nbin=96, show=FALSE) {
 
   res.ff = flowFrame (tmpmat, parameters=as (pdata, "AnnotatedDataFrame"))
 
-  res.ff = flowFrame (tmpmat)
   if (show) {
     for (p in parameters) {
       show.bad.events(res.ff, p)
