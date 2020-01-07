@@ -57,7 +57,7 @@ find.local.maxima <- function (kde, thresh=.05, show=FALSE, ...) {
 #'   \item{pick}{The indices in the original kde corresponding to the peaks}
 #' }
 #' @export
-find.local.minima <- function (kde, thresh=.05, show=FALSE, ...) {
+find.local.minima <- function (kde, thresh=.001, show=FALSE, ...) {
 
   ind <- msExtrema(kde$y, span=11)$index.min
 
