@@ -35,7 +35,7 @@ blob.boundary(
 
 \item{gridsize}{2D measure of gridsize used to compute the Kernel Density Estimate}
 
-\item{height}{The height at which to compute contours (\link{0, 1})}
+\item{height}{The height at which to compute contours (height range is 0 - 1, 1 being the most dense peak)}
 
 \item{convex}{Logical, whether to find the largest convex polygon at the target location}
 
@@ -49,7 +49,7 @@ blob.boundary(
 }
 \value{
 A polygon, described as a 2-column matrix of coordinates.  You can use this polygon
-to gate data using the \strong{flowCore} function polygonGate(.gate = the result of blob.boundary).
+to gate data using the \strong{flowCore} function \code{polygonGate(.gate = bb)}.
 }
 \description{
 The idea is to compute the kernel density estimate of a 2D slice
@@ -60,7 +60,8 @@ that the contour be convex, in which case the function will attempt to find
 the largest convex contour at either location.
 }
 \details{
-blob.boundary can get confused in several circumstances.  Sometimes it's
+blob.boundary uses \code{\link[grDevices]{contourLines}} to generate contours in density data.
+It can get confused in several circumstances.  Sometimes it's
 hard to detect a weak blob in the presence of a very strong blob, particularly
 if they're close to each other and there's significant density connecting them.  It's
 pretty easy to see why: contour lines will easily span between the two, effectively

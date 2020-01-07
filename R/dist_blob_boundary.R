@@ -26,13 +26,14 @@
 #' @param strongest Logical, whether to look for the blob containing the highest density
 #' @param bandwidth 2D measure of bandwidth used to compute the Kernel Density Estimate
 #' @param gridsize 2D measure of gridsize used to compute the Kernel Density Estimate
-#' @param height The height at which to compute contours ([0, 1])
+#' @param height The height at which to compute contours (height range is 0 - 1, 1 being the most dense peak)
 #' @param convex Logical, whether to find the largest convex polygon at the target location
 #' @param height1 Starting height for searching for convex blob (only used if convex = TRUE)
 #' @param height2 Ending height for searching for convex blob (only used if convex = TRUE)
 #' @param delta_h Step size used for searching for convex blob (only used if convex = TRUE)
 #' @param log.transform Logical, should we use the density or its logarithm
-#' @details blob.boundary can get confused in several circumstances.  Sometimes it's
+#' @details blob.boundary uses \code{\link[grDevices]{contourLines}} to generate contours in density data.
+#' It can get confused in several circumstances.  Sometimes it's
 #' hard to detect a weak blob in the presence of a very strong blob, particularly
 #' if they're close to each other and there's significant density connecting them.  It's
 #' pretty easy to see why: contour lines will easily span between the two, effectively
@@ -46,7 +47,7 @@
 #' (default) value.  This is because taking the log compresses the dynamic range, so
 #' effectively everything is sort of 'high'.
 #' @return A polygon, described as a 2-column matrix of coordinates.  You can use this polygon
-#' to gate data using the **flowCore** function polygonGate(.gate = the result of blob.boundary).
+#' to gate data using the **flowCore** function \code{polygonGate(.gate = bb)}.
 #' @export
 blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
                            location, strongest = FALSE,
