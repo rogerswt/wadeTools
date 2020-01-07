@@ -118,10 +118,10 @@ ff_gated = Subset(ff, polygonGate(.gate = bb))
 nrow(ff)
 nrow(ff_gated)
 
-# Out of the 452k events in the original file, 128k are inside the blob boundary
+# Out of the 198k events in the original file, 109k are inside the blob boundary
 ```
 
-**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.25, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.5, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
 
 You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE, or log.transform to TRUE or FALSE (see the help page for **blob.boundary()**), and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**!
 
@@ -138,11 +138,11 @@ ff_gated = Subset(ff, polygonGate(.gate = bb_inflated))
 # re-count gated events
 nrow(ff_gated)
 
-# note that the number of gated events rose from 128k to 187k due to the fact
-# that the gate is bigger, and thus encircles more events
+# note that the number of gated events rose from 109k to 125k due to the fact
+# that the gate is bigger, and thus encircles ~12% more events
 ```
 
-This is often a useful adjunct to **blob.boundary**, since it's pretty hard to find the outer limits of blobs.
+Inflating is often a useful adjunct to **blob.boundary**, since it's pretty hard to find the outer limits of blobs.
 
 ## more to come
 fancier pre-gating, with clean.fp
