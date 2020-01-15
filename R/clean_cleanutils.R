@@ -101,15 +101,18 @@ find.bad.slices = function (fs, parameters=NULL, qcfac = 1.25, show=FALSE) {
 #
 # #' @examples
 # #'
-# #' params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
-# #'
-# #' # tag events for removal, plot a picture
-# #' ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
-# #'
-# #' # filter out the events in "bad" slices
-# #' ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
-# #'
-#
+# #' # get some example data
+#' filename = system.file("extdata", "example1.fcs", package = "wadeTools")
+#' ff = get_sample(filename)
+#'
+#' params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
+#'
+#' # tag events for removal, plot a picture
+#' ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
+#'
+#' # filter out the events in "bad" slices
+#' ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
+#'
 #' @export
 clean.fp = function(ff, parameters=NULL, nbin=96, show=FALSE) {
   requireNamespace("fields")   # yline
