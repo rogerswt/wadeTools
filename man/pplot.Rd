@@ -67,5 +67,5 @@ ff = get_sample(filename)
 pplot(ff, parameters = c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear')
 
 # another plot, with the default biexponential scaling
-pplot(ff, c("CD4", "CD8"))
+pplot(ff, c("CD4PETR", "CD8Q705"))
 }
