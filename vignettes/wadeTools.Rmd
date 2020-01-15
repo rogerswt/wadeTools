@@ -123,7 +123,7 @@ ff_gated = Subset(ff, polygonGate(.gate = bb))
 nrow(ff)
 nrow(ff_gated)
 
-# Out of the 198k events in the original file, 109k are inside the blob boundary
+# Out of the 198k events in the original file, 102k are inside the blob boundary
 ```
 
 **blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.5, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
@@ -143,7 +143,7 @@ ff_gated = Subset(ff, polygonGate(.gate = bb_inflated))
 # re-count gated events
 nrow(ff_gated)
 
-# note that the number of gated events rose from 109k to 125k due to the fact
+# note that the number of gated events rose from 102k to 121k due to the fact
 # that the gate is bigger, and thus encircles ~12% more events
 ```
 
