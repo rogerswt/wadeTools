@@ -59,6 +59,10 @@ Draw a picture, with colors reminiscent of FlowJo.
 }
 \examples{
 
+# get some example data
+filename = system.file("extdata", "example1.fcs", package = "wadeTools")
+ff = get_sample(filename)
+
 # a plot with linear coordinate scaling
 pplot(ff, parameters = c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear')
 

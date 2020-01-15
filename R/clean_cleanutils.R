@@ -95,13 +95,13 @@ find.bad.slices = function (fs, parameters=NULL, qcfac = 1.25, show=FALSE) {
 #' A recommendation is to use at least one parameter from each laser, in order to be
 #' sensitive to laser fluctuations.  I often use SSC-A plus one FL parameter from
 #' each laser.
-#' @return The original flowFrame, with an additional parameter called \code{clean}, which
+#' @return The original flowFrame, with an additional parameter called clean, which
 #' has the value 1 for events to be kept, and 0 for events that should be ditched.  It's up
 #' to the user to apply this filter.
 #
-# #' @examples
-# #'
-# #' # get some example data
+#' @examples
+#'
+#' # get some example data
 #' filename = system.file("extdata", "example1.fcs", package = "wadeTools")
 #' ff = get_sample(filename)
 #'

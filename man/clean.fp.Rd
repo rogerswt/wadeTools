@@ -16,7 +16,7 @@ clean.fp(ff, parameters = NULL, nbin = 96, show = FALSE)
 \item{show}{Logical, should we show our work?}
 }
 \value{
-The original flowFrame, with an additional parameter called \code{clean}, which
+The original flowFrame, with an additional parameter called clean, which
 has the value 1 for events to be kept, and 0 for events that should be ditched.  It's up
 to the user to apply this filter.
 }
@@ -35,4 +35,19 @@ it's not equal time slices, but equal \emph{probability} slices).
 A recommendation is to use at least one parameter from each laser, in order to be
 sensitive to laser fluctuations.  I often use SSC-A plus one FL parameter from
 each laser.
+}
+\examples{
+
+# get some example data
+filename = system.file("extdata", "example1.fcs", package = "wadeTools")
+ff = get_sample(filename)
+
+params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
+
+# tag events for removal, plot a picture
+ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
+
+# filter out the events in "bad" slices
+ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
+
 }
