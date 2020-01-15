@@ -41,7 +41,7 @@
 #' pplot(ff, parameters = c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear')
 #'
 #' # another plot, with the default biexponential scaling
-#' pplot(ff, c("CD4", "CD8"))
+#' pplot(ff, c("CD4PETR", "CD8Q705"))
 #' @export
 pplot <- function (ff, parameters, blueBackground=FALSE, showZero=FALSE, nbin=501, bandwidth=0.001,
                    cr = blob_color(blueBackground=FALSE), col = "black", nrpoints = 0,
