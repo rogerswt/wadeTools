@@ -52,7 +52,7 @@ background (like FlowJo)}
 
 \item{ticksize}{Weight of the tickmarks in relative coordinates.}
 
-\item{...}{Additional graphical parameters passed to \code{flowCore \link[flowCore]{plot}}}
+\item{...}{Additional graphical parameters passed to \code{flowCore \link[flowCore]{flowFrame-class}}}
 }
 \description{
 Draw a picture, with colors reminiscent of FlowJo.

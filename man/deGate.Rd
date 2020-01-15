@@ -24,7 +24,7 @@ deGate(
 
 \item{high}{if TRUE, returns the 'percentile' threshold. It returns the 99th percentile by default}
 
-\item{percentile}{a value in \link{0,1} that is used as the percentile is 'high' is TRUE}
+\item{percentile}{a value in the interval 0,1 that is used as the percentile is 'high' is TRUE}
 
 \item{kernel}{refer to the '?density' in r base}
 

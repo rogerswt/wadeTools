@@ -93,7 +93,7 @@ compute.spill <- function (ff, fsc.thresh=30000, path=NULL, show=FALSE) {
   # read and gate each tube and compute a column of spill coefficients
   fc = list()
   for (i in 1:n_fl) {
-    fc[[i]] = suppressWarnings (read.FCS (fn[i], trans=F))
+    fc[[i]] = suppressWarnings (read.FCS (fn[i], transformation = F))
     fc[[i]] = derail (fc[[i]], parameters=c("FSC-A", "SSC-A"))
     fc[[i]] = Subset (fc[[i]], dgate)
     res = locate.blobs(fc[[i]], param=c("FSC-A", "SSC-A"), log.transform=TRUE, bandwidth=c(.05, .05))
@@ -234,4 +234,103 @@ spill.slope <- function (ff, p1, p2, rail.val=262143, dim.thresh=1000, show=FALS
 
 plot.empty.diag = function () {
   plot (0, 0, pch='', xlim=c(0,1), ylim=c(0,1), xaxt='n', yaxt='n')
+}
+
+ff2kde = function (ff, param=c("FSC-A", "SSC-A"), nbin=501, bandwidth=0.02, log.transform=FALSE) {
+
+  # extract a matrix of values
+  mat <- exprs(ff)[,param]
+
+  # compute a reasonable bandwith for the kde
+  bw1 <- bandwidth * max (mat[,1])
+  bw2 <- bandwidth * max (mat[,2])
+  # do the kernel density estimate
+  kde <- bkde2D (mat, bandwidth=c(bw1, bw2), gridsize=c(nbin,nbin))
+
+  if (log.transform) {
+    epsilon = 1e-4
+    kde$fhat = log10(epsilon + kde$fhat)
+    # renormalize to [0,1]
+    mx = max(kde$fhat)
+    mn = min(kde$fhat)
+    kde$fhat = (kde$fhat - mn) / (mx - mn)
+  }
+  # normalize the density estimate for sanity
+  kde$fhat <- kde$fhat / max(kde$fhat)
+
+  kde
+}
+
+
+#
+#  locate.blobs
+#  NOTE: included only for support of compute.spill
+#
+#' @export
+locate.blobs = function (ff, param=c("FSC-A", "SSC-A"), eps=.01, max_peaks=10, min_level=5*eps, nbin=501, bandwidth=0.02, log.transform=FALSE, show=FALSE) {
+  requireNamespace("KernSmooth")
+  requireNamespace("flowCore")
+  if (!(is(ff)[[1]]) == "flowFrame") {
+    stop ("first argument must be a flowFrame\n")
+  }
+  kde = ff2kde (ff, param, nbin=nbin, bandwidth=bandwidth, log.transform=log.transform)
+
+  # search from the top down
+  heights = seq(1-eps, min_level, by=-eps)
+  centers = matrix (nrow=0, ncol=2)
+  colnames(centers) = param
+  contours = list()
+  levels = vector('numeric')
+  nfound = 0
+  for (height in heights) {
+
+    contr <- contourLines (kde$x1, kde$x2, kde$fhat, levels=height)
+    contr = close.contour (contr)
+
+    # loop over the contour lines to detect new centers
+    for (c in 1:length(contr)) {
+      found = FALSE
+      cmat =  cont2mat(contr[[c]], param)
+      if (nrow(centers) > 0) {
+        for (p in 1:nrow(centers)) {
+          if (inside (centers[p,], cmat)) {
+            found = TRUE
+            break
+          }
+        }
+      }
+      if (!found) {
+        centers = rbind (centers, centroid (cont2mat(contr[[c]], param)))
+        nfound = nfound + 1
+        contours[[nfound]] = contr[[c]]
+      }
+    }
+
+    # loop over the contour lines to update the blob contours
+    for (c in 1:length(contr)) {
+      enclosed = 0
+      cmat = cont2mat(contr[[c]], param)
+      for (p in 1:nrow(centers)) {
+        if (inside (centers[p,], cmat)) {
+          enclosed = enclosed + 1
+          which = p
+        }
+      }
+      # update the contour if it encloses exactly one center
+      if (enclosed == 1) {
+        contours[[which]] = cont2mat (contr[[c]], param)
+        levels[which] = contr[[c]]$level
+      }
+    }
+  }
+
+  if (show) {
+    pplot (ff, param, instrument='diva', tx='biexp', ty='biexp')
+    for (i in 1:length(contours)) {
+      text (centers[i,1], centers[i,2], label=paste(i))
+      lines (contours[[i]])
+    }
+  }
+
+  return (list (centers=centers, contours=contours, levels=levels))
 }

@@ -83,13 +83,13 @@ fence.post = function (ff, events, params, percentile=c(10,90), main='', col = '
   }
   ax(axis = 1, type = 'biexp')
   # draw and label the y-axis
-  axis (side=2, at=1:nparam, lwd.ticks=2, label=parameters(ff)$desc[params], padj=0, las=2)
+  axis (side=2, at=1:nparam, lwd.ticks=2, labels=parameters(ff)$desc[params], padj=0, las=2)
   par (opar)
 }
 
 # draw a horizontal flag
 plot.flag = function (lo, hi, y.pos, col) {
-  require ("fields")
+  # requireNamespace("fields")
   lwd = 3
   tall = .1
   # main bar

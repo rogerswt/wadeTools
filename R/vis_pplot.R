@@ -30,7 +30,7 @@
 #' @param ty tick style.  One of \code{'biexp', 'log', 'linear'}
 #' @param plotaxt Logical, should we draw the axes?
 #' @param ticksize Weight of the tickmarks in relative coordinates.
-#' @param ... Additional graphical parameters passed to \code{flowCore \link[flowCore]{plot}}
+#' @param ... Additional graphical parameters passed to \code{flowCore \link[flowCore]{flowFrame-class}}
 #' @examples
 #'
 #' # a plot with linear coordinate scaling
@@ -44,29 +44,36 @@ pplot <- function (ff, parameters, blueBackground=FALSE, showZero=FALSE, nbin=50
                    max_channel = 262143,
                    tx=c("biexp", "log", "linear"), ty=c("biexp", "log", "linear"),
                    plotaxt = TRUE,  ticksize=1, ...) {
-    if(!is.null(cr)){
-      suppressWarnings (flowCore::plot (ff, parameters, colramp=cr, nbin=nbin, band=bandwidth, nrpoints=nrpoints, axes=FALSE, ...))
-    }
-    else{
-#       suppressWarnings (plot (ff, parameters, col=col, nbin=nbin, band=bandwidth, nrpoints=nrpoints, axes=FALSE, ...))
 
-      suppressWarnings(plot (exprs(ff)[,parameters[1]],exprs(ff)[,parameters[2]], pch=20, col=col,cex =.2,  axes=F,xlab=parameters[1],ylab=parameters[2], ...))
-      box()
-    }
+  requireNamespace("flowCore")
+  requireNamespace("fields")
+
+  if(!is.null(cr)){
+    suppressWarnings (flowCore::plot (ff, parameters, colramp=cr, nbin=nbin, band=bandwidth, nrpoints=nrpoints, axes=FALSE, ...))
+  }
+  else{
+    #       suppressWarnings (plot (ff, parameters, col=col, nbin=nbin, band=bandwidth, nrpoints=nrpoints, axes=FALSE, ...))
+
+    suppressWarnings(plot (exprs(ff)[,parameters[1]],exprs(ff)[,parameters[2]], pch=20, col=col,cex =.2,  axes=F,xlab=parameters[1],ylab=parameters[2], ...))
+    box()
+  }
 
   if(plotaxt==TRUE){
-	  suppressWarnings (ax (1, max_channel = max_channel, type=tx, ticksize=ticksize))
-	  suppressWarnings (ax (2, max_channel = max_channel, type=ty, ticksize=ticksize))
+    suppressWarnings (ax (1, max_channel = max_channel, type=tx, ticksize=ticksize))
+    suppressWarnings (ax (2, max_channel = max_channel, type=ty, ticksize=ticksize))
   }
-	if (showZero) {
-		xline (0, lty='dotdash')
-		yline (0, lty='dotdash')
-	}
+  if (showZero) {
+    xline(0, lty='dotdash')
+    yline(0, lty='dotdash')
+  }
 }
 
 # for now this assumes biexp transform if tx != linear (or ty)
 pplot.with.hist = function (ff, parameters, tx='biexp', ty='biexp', mthresh=c(.001, .001), bandwidth=c(.03, .03), find.thresholds=FALSE) {
-  require(fields)
+
+  requireNamespace("fields")
+  requireNamespace("KernSmooth")
+
   # set up the layout
   laymat = matrix (c(1, 3, 0, 2), nrow=2, ncol=2)
   widths = c(1, .3)

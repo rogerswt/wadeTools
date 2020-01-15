@@ -17,11 +17,11 @@ slashes.
 Concatenate character elements into a unix-like path specification.
 }
 \examples{
-\code{
+
 a = "dir1"
 b = "dir2"
 c = "dir3"
 text_to_path(a, b, c)
 ## "dir1/dir2/dir3/"
-}
+
 }

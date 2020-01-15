@@ -18,7 +18,7 @@
 #' @param kde The input Kernel Density Estimate
 #' @param thresh Threshold above which peaks are considered
 #' @param show Logical, should we display our work?
-#' #' @param ... Additional arguments passed to par().  Relevant only if show = TRUE.
+#' @param ... Additional arguments passed to \code{par() \link[graphics]{par}}, Relevant only if show = TRUE.
 #' @return A list with three elements:
 #' \describe{
 #'   \item{x}{X coordinates of the detected peaks}
@@ -26,22 +26,22 @@
 #'   \item{pick}{The indices in the original kde corresponding to the peaks}
 #' }
 #' @export
-find.local.maxima <- function (kde, thresh=.05, show=FALSE, ...) {
+find.local.maxima <- function(kde, thresh=.05, show=FALSE, ...) {
 
-  ind <- msExtrema(kde$y, span=11)$index.max
+  ind <- msExtrema(kde$y, span = 11)$index.max
 
-  max_y <- max (kde$y)
+  max_y <- max(kde$y)
   sel <- kde$y / max_y > thresh
 
-  ind <- which (ind & sel)
+  ind <- which(ind & sel)
 
   if (show) {
     par(...)
-    plot (kde, type='l', xlab="", ylab="", xaxt='n')
-    points (kde$x[ind], kde$y[ind], pch=20, cex=.5, col='red')
+    plot(kde, type='l', xlab="", ylab="", xaxt='n')
+    points (kde$x[ind], kde$y[ind], pch = 20, cex = .5, col = 'red')
   }
 
-  return (list(x=kde$x[ind], y=kde$y[ind], pick=ind))
+  return(list(x=kde$x[ind], y=kde$y[ind], pick=ind))
 }
 
 #' @title Find Local Minima in a KDE
@@ -49,7 +49,7 @@ find.local.maxima <- function (kde, thresh=.05, show=FALSE, ...) {
 #' @param kde The input Kernel Density Estimate
 #' @param thresh Threshold above which valleys are considered
 #' @param show Logical, should we display our work?
-#' @param ... Additional arguments passed to par().  Relevant only if show = TRUE.
+#' @param ... Additional arguments passed to \code{par() \link[graphics]{par}}, Relevant only if show = TRUE.
 #' @return A list with three elements:
 #' \describe{
 #'   \item{x}{X coordinates of the detected peaks}
@@ -77,6 +77,8 @@ find.local.minima <- function (kde, thresh=.001, show=FALSE, ...) {
 
 # helper function, not to be exposed
 msExtrema <- function(x, span=3) {
+
+  requireNamespace("splus2R")
   # WTR 2016-08-26  - looks like peaks has been deprecated again!
   # Found a function in a previous version and copied it here.  It depends on
   # splus2r
@@ -98,7 +100,7 @@ msExtrema <- function(x, span=3) {
 #' @title Calculate the Width of a KDE
 #' @description  find the full width half-maximum (or other width at percent maximum) of a kde.
 #' @param kde The input kde
-#' @param frac The height ([0, 1]) at which to compute the width.
+#' @param frac The height in the interval 0,1 at which to compute the width.
 #' @return A list with 4 elements:
 #' \describe{
 #'   \item{center}{X coordinate of the peak center}
@@ -107,7 +109,7 @@ msExtrema <- function(x, span=3) {
 #'   \item{frac}{The value of the input parameter 'frac'}
 #' }
 #' @export
-find.width = function (kde, frac=0.5) {
+find.width = function(kde, frac=0.5) {
   x = kde$x
   y = kde$y
   mx = max(kde$y)
@@ -122,7 +124,7 @@ find.width = function (kde, frac=0.5) {
   right = x[i]
   center = left + (right - left)/2
 
-  return (list(center=center, left=left, right=right, frac=frac))
+  return(list(center = center, left = left, right = right, frac = frac))
 }
 
 #' @title Calculate the Cummulative Probability Distribution of a KDE
@@ -153,21 +155,21 @@ cumm.kde = function (kde) {
 #' @param normalize Logical, should the resulting kde be normalized to 1.0?
 #' @return Another kde.
 #' @export
-deriv.kde = function (kde, normalize=TRUE) {
+deriv1.kde = function(kde, normalize=TRUE) {
   x = kde$x
   y = kde$y
   npts = length(y)
   yp = vector('numeric')
-  for (i in 2:(npts-1)) {
+  for (i in 2:(npts - 1)) {
     yp[i] = (y[i+1] - y[i-1]) / (x[i+1] - x[i-1])
   }
   yp[1] = yp[2]
-  yp[npts] = yp[npts-1]
+  yp[npts] = yp[npts - 1]
 
   if (normalize) {
-    yp = yp / max (abs(yp))
+    yp = yp / max(abs(yp))
   }
-  res = list(x=x, y=yp)
+  res = list(x = x, y = yp)
   res
 }
 

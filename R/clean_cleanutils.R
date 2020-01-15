@@ -43,30 +43,29 @@ time.slice = function (ff, nbin=96) {
 
 # Use changepoint analysis to find perturbed slices
 find.bad.slices = function (fs, parameters=NULL, qcfac = 1.25, show=FALSE) {
-  # require (changepoint)
-  require (flowFP)
+  requireNamespace("flowFP")
 
   if (is.null(parameters)) {      # try to find only fluorescence parameters
     all.names = colnames(fs)
     # get rid of FSC, SSC and other named parameters
     exclude.parameters = c("FSC", "SSC", "Time", "clean", "index")
-    bool = rep (TRUE, length=ncol(fs[[1]]))
+    bool = rep (TRUE, length = ncol(fs[[1]]))
     for (ep in exclude.parameters) {
-      bool = bool & !grepl(pattern = ep, all.names, fixed=TRUE)
+      bool = bool & !grepl(pattern = ep, all.names, fixed = TRUE)
     }
     idx = which(bool)
     parameters = colnames(fs)[idx]
   }
 
   # calculate qc metric using same method as plotPlateFP
-  fp = flowFP (fs, parameters=parameters)
-  cmat = counts (fp, transformation='log2norm')
+  fp = flowFP(fs, parameters = parameters)
+  cmat = counts(fp, transformation = 'log2norm')
   cmat[which(is.infinite(cmat))] = NA
-  qcval = apply (cmat, 1, na.rm=TRUE, sd)
+  qcval = apply(cmat, 1, na.rm = TRUE, sd)
 
   # flag qcvals that are kinda big...
-  medval = median (qcval)
-  ditch = which (qcval >= medval * qcfac)
+  medval = median(qcval)
+  ditch = which(qcval >= medval * qcfac)
 
   if (show) {
     idx = 1:length(qcval)
@@ -99,20 +98,21 @@ find.bad.slices = function (fs, parameters=NULL, qcfac = 1.25, show=FALSE) {
 #' @return The original flowFrame, with an additional parameter called \code{clean}, which
 #' has the value 1 for events to be kept, and 0 for events that should be ditched.  It's up
 #' to the user to apply this filter.
-#' @examples
-#' \code{
-#' params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
-#'
-#' # tag events for removal, plot a picture
-#' ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
-#'
-#' # filter out the events in "bad" slices
-#' ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
-#'
-#' }
+#
+# #' @examples
+# #'
+# #' params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
+# #'
+# #' # tag events for removal, plot a picture
+# #' ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
+# #'
+# #' # filter out the events in "bad" slices
+# #' ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
+# #'
+#
 #' @export
-clean.fp = function (ff, parameters=NULL, nbin=96, show=FALSE) {
-  require (fields)   # yline
+clean.fp = function(ff, parameters=NULL, nbin=96, show=FALSE) {
+  requireNamespace("fields")   # yline
 
   # preserve pData to restore on output
   pdata = pData(parameters(ff))

@@ -76,7 +76,7 @@ get_sample = function(fn, compensate=TRUE, transform=TRUE, derail=TRUE, nice.nam
 #  return value: a transformed flowFrame
 #' @title A Convenience Wrapper for Transformation
 #' @description Convenience wrapper for \code{\link[flowCore]{transformList}} and \code{\link[flowCore]{transform}}.
-#' @param f The flowFrame to be transformed
+#' @param ff The flowFrame to be transformed
 #' @param cols The columns (parameters) of the flowFrame to be transformed
 #' @param method The transformation function. One of \code{biexp}, \code{log} or \code{linear}.
 #' @param fac The scaling factor used only for \code{method = 'linear'}.
@@ -104,7 +104,7 @@ doTransform <- function(ff,cols = c(1:5, 7:13),method = c("biexp","log","linear"
       return(flowCore::transform(ff, lxlist))
     }
   }
-  else if (is(f,"flowSet")) {
+  else if (is(ff,"flowSet")) {
     for (i in 1:length(ff)) {
       method = match.arg(method)
       if (method == "biexp") {

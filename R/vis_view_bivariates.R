@@ -117,6 +117,22 @@ add.dots = function(ff, params, pch = 20, cex = .25, col = 'black') {
   points(x, y, pch = pch, cex = cex, col = col)
 }
 
+# helper function to generate a curve representing the spill spread effect
+# to be used to create a polygon gate that accounts for spill spread
+#  Roederer, 2001, Cytometry A.
+#
+#  c_i_j  = spillover coefficient from parameter i to parameter j
+#  e      = error coefficient
+#  s0_j = intercept threshold for parameter j
+#
+generate.spill.noise.curve = function (c_i_j, s0_j, e=0.15) {
+  s_i = inv.biexp.transform (seq (-2, 6, length.out=100))    # extend ends below and above dynamic range
+  n_i_j = e * s_i * c_i_j
+  tot_j = s0_j + n_i_j
+
+  return (list (x=s_i, y=tot_j))
+}
+
 add.curve.threshold = function(thresh, spill, params, lwd = 2, col = 'black') {
   # sanity check
   if (!identical(names(thresh), colnames(spill))) {
@@ -142,12 +158,15 @@ add.curve.threshold = function(thresh, spill, params, lwd = 2, col = 'black') {
 
 add.contours = function(ff, params, bandwidth = c(.03, .03), gridsize =
                         c(401L, 401L), height = .1, log.transform = FALSE) {
+
+  requireNamespace("KernSmooth")
+
   mat <- exprs(ff)[,params]
 
   bw1 <- bandwidth[1] * max(mat[,1])
   bw2 <- bandwidth[2] * max(mat[,2])
   # do the kernel density estimate
-  kde <- bkde2D(mat, bandwidth = c(bw1, bw2), gridsize = gridsize)
+  kde <- KernSmooth::bkde2D(mat, bandwidth = c(bw1, bw2), gridsize = gridsize)
 
   # normalize the density estimate for sanity
   kde$fhat <- kde$fhat / max(kde$fhat)

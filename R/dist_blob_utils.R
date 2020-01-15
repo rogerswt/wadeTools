@@ -94,7 +94,7 @@ get.hull <- function (blob) {
 #' @details The input blob should be convex.  You can use get.hull() first if you're not sure.
 #' @export
 inflate.contour <- function (blob, dist) {
-  require("splancs")
+  requireNamespace("splancs")
   x <- blob[,1]
   y <- blob[,2]
   len <- length(x)
@@ -127,7 +127,9 @@ inflate.contour <- function (blob, dist) {
 #' @return Another polygon
 #' @export
 smooth.contour <- function (blob, npts=5) {
-  require("splancs")
+
+  requireNamespace("splancs")
+
   x <- blob[,1]
   y <- blob[,2]
   len <- length(x)

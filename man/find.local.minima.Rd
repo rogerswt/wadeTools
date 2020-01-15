@@ -4,7 +4,7 @@
 \alias{find.local.minima}
 \title{Find Local Minima in a KDE}
 \usage{
-find.local.minima(kde, thresh = 0.05, show = FALSE, ...)
+find.local.minima(kde, thresh = 0.001, show = FALSE, ...)
 }
 \arguments{
 \item{kde}{The input Kernel Density Estimate}
@@ -13,7 +13,7 @@ find.local.minima(kde, thresh = 0.05, show = FALSE, ...)
 
 \item{show}{Logical, should we display our work?}
 
-\item{...}{Additional arguments passed to par().  Relevant only if show = TRUE.}
+\item{...}{Additional arguments passed to \code{par() \link[graphics]{par}}, Relevant only if show = TRUE.}
 }
 \value{
 A list with three elements:

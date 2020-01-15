@@ -22,7 +22,7 @@
 #' @return A compensated flowFrame or flowSet
 #' @export
 autocomp <- function(f) {
-  require(flowCore)
+  requireNamespace("flowCore")
 	if (is(f, "flowFrame")) {
 		f <- compensate(f, keyword(f)$SPILL)
 		return(f)

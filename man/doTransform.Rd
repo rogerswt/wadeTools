@@ -12,13 +12,13 @@ doTransform(
 )
 }
 \arguments{
+\item{ff}{The flowFrame to be transformed}
+
 \item{cols}{The columns (parameters) of the flowFrame to be transformed}
 
 \item{method}{The transformation function. One of \code{biexp}, \code{log} or \code{linear}.}
 
 \item{fac}{The scaling factor used only for \code{method = 'linear'}.}
-
-\item{f}{The flowFrame to be transformed}
 }
 \value{
 The transformed flowFrame.

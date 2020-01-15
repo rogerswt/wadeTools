@@ -55,8 +55,9 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
                            height=.1, convex = FALSE,
                            height1 = height, height2 = 0.05, delta_h = 0.01,
                            log.transform=FALSE) {
-	require ("KernSmooth")
-	require ("flowCore")
+
+	requireNamespace("KernSmooth")
+	requireNamespace("flowCore")
 
   if (!(is(ff)[[1]]) == "flowFrame") {
 		stop ("first argument must be a flowFrame\n")
@@ -73,7 +74,7 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 	bw1 <- bandwidth[1] * max (mat[,1])
 	bw2 <- bandwidth[2] * max (mat[,2])
 	# do the kernel density estimate
-	kde <- bkde2D (mat, bandwidth=c(bw1, bw2), gridsize=gridsize)
+	kde <- KernSmooth::bkde2D (mat, bandwidth=c(bw1, bw2), gridsize=gridsize)
 
 	# normalize the density estimate for sanity
 	kde$fhat <- kde$fhat / max(kde$fhat)

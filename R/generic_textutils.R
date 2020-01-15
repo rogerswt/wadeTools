@@ -19,14 +19,14 @@
 #' @param ... One or more character scalars to be pasted tightly.
 #' @return A character variable containing the concatenated strings.
 #' @examples
-#' \code{
+#'
 #' a = "The_first_part"
 #' b = "---"
 #' c = "and_the_second_part"
 #' tight(a, b, c)
 #' ## "The_first_part---and_the_second_part"
 #'
-#' }
+#'
 #' @export
 tight = function(...) {
   res = paste(..., sep = "")
@@ -41,13 +41,13 @@ tight = function(...) {
 #' @return A character variable containing the concatenated strings, properly delimited with
 #' slashes.
 #' @examples
-#' \code{
+#'
 #' a = "dir1"
 #' b = "dir2"
 #' c = "dir3"
 #' text_to_path(a, b, c)
 #' ## "dir1/dir2/dir3/"
-#' }
+#'
 #' @export
 text_to_path = function(...) {
   tmp = c(...)

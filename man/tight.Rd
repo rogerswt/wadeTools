@@ -16,12 +16,12 @@ A character variable containing the concatenated strings.
 Paste tightly, without having to specify the \code{sep} argument.
 }
 \examples{
-\code{
+
 a = "The_first_part"
 b = "---"
 c = "and_the_second_part"
 tight(a, b, c)
 ## "The_first_part---and_the_second_part"
 
-}
+
 }

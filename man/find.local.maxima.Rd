@@ -11,8 +11,9 @@ find.local.maxima(kde, thresh = 0.05, show = FALSE, ...)
 
 \item{thresh}{Threshold above which peaks are considered}
 
-\item{show}{Logical, should we display our work?
-#' @param ... Additional arguments passed to par().  Relevant only if show = TRUE.}
+\item{show}{Logical, should we display our work?}
+
+\item{...}{Additional arguments passed to \code{par() \link[graphics]{par}}, Relevant only if show = TRUE.}
 }
 \value{
 A list with three elements:

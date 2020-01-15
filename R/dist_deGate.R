@@ -25,7 +25,7 @@
 #' @param channel an integer to specifiy the channel for 1D density estimation analysis
 #' @param n.sd an integer that is multiplied to the standard deviation to determine the place of threshold
 #' @param high if TRUE, returns the 'percentile' threshold. It returns the 99th percentile by default
-#' @param percentile a value in [0,1] that is used as the percentile is 'high' is TRUE
+#' @param percentile a value in the interval 0,1 that is used as the percentile is 'high' is TRUE
 #' @param kernel refer to the '?density' in r base
 #' @param graphs if TRUE, it plots the density as well as the threshold on the same plot
 #' @param all.cut if TRUE, it returns all the cutoff points whose length can roughly estiamte the number of cell subsets in that dimension

@@ -36,15 +36,3 @@ A recommendation is to use at least one parameter from each laser, in order to b
 sensitive to laser fluctuations.  I often use SSC-A plus one FL parameter from
 each laser.
 }
-\examples{
-\code{
-params = colnames(ff)[c(4, 7, 11, 13, 15)]   # SSC-A plus one from each laser
-
-# tag events for removal, plot a picture
-ff_tmp = clean.fp(ff = ff, parameters = params, show = TRUE)
-
-# filter out the events in "bad" slices
-ff_clean = Subset(ff, rectangleGate("clean" = c(0.5, Inf))
-
-}
-}

@@ -12,6 +12,12 @@ gaussian_crossover(l1, s1, m1, l2, s2, m2)
 \item{s1}{Sigma of the first gaussian}
 
 \item{m1}{Mu of the first gaussian}
+
+\item{l2}{Lambda of the second gaussian}
+
+\item{s2}{Sigma of the second gaussian}
+
+\item{m2}{Mu of the second gaussian}
 }
 \value{
 The x-coordinate of the intersection.

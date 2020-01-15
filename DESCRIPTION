@@ -14,14 +14,17 @@ biocViews:
 Depends: 
     R (>= 3.4.0),
     flowCore (>= 1.42.0),
-    flowViz,
-    splus2R
+    flowViz, 
+    KernSmooth,
+    splancs, 
+    flowFP
 RoxygenNote: 7.0.2
 Imports: 
-    flowFP,
-    KernSmooth,
+    splus2R, 
+    sp, 
     fields,
     lattice,
+    methods,
     wmtsa
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

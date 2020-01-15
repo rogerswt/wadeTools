@@ -17,9 +17,9 @@
 #' @param l1 Lambda of the first gaussian
 #' @param s1 Sigma of the first gaussian
 #' @param m1 Mu of the first gaussian
-#' @param l1 Lambda of the first gaussian
-#' @param s1 Sigma of the first gaussian
-#' @param m1 Mu of the first gaussian
+#' @param l2 Lambda of the second gaussian
+#' @param s2 Sigma of the second gaussian
+#' @param m2 Mu of the second gaussian
 #' @return The x-coordinate of the intersection.
 #' @export
 gaussian_crossover = function(l1, s1, m1, l2, s2, m2) {
@@ -56,13 +56,13 @@ gaussian_crossover = function(l1, s1, m1, l2, s2, m2) {
 #' @return A gde.
 #' @export
 fit_gaussian_base = function(kde, height, show=FALSE) {
-  kde = normalize_kde(kde)
+  kde = normalize.kde(kde)
   res = find.width(kde, frac = height)
   base = res$right - res$left
   gwidth = interpolate_width_gaussian(height)
   sigma = base / gwidth
   mu = res$center
-  gde = wadeTools::gaussian(x = kde$x, mu = mu, sigma = sigma, scale = 'unit.height')
+  gde = my.gaussian(x = kde$x, mu = mu, sigma = sigma, scale = 'unit.height')
 
   if (show) {
     plot(kde, xlim = c(-.5, bx(1000)), xaxt = 'n')
@@ -84,7 +84,7 @@ fit_gaussian_base = function(kde, height, show=FALSE) {
 #' @export
 retrieve_sigma_mu = function(gde) {
   height = 0.5
-  gde = normalize_kde(gde)
+  gde = normalize.kde(gde)
   res = find.width(gde, frac = height)
   base = res$right - res$left
   gwidth = interpolate_width_gaussian(height)
@@ -105,7 +105,7 @@ cumm_prob_thresh = function(gde, cumm.prob=0.9999) {
 # This width is relative to sigma.  In other words, the generated gaussian
 # has sigma = 1.
 tabulate_width_gaussian = function(height = seq(.001, .999, length = 999)) {
-  kde = wadeTools::gaussian(x = seq(-10, 10, length = 6001), mu = 0, sigma = 1, scale = 'unit.height')
+  kde = my.gaussian(x = seq(-10, 10, length = 6001), mu = 0, sigma = 1, scale = 'unit.height')
   width = vector(mode = 'numeric')
   k = 1
   for (h in height) {
@@ -125,7 +125,8 @@ interpolate_width_gaussian = function(height) {
 }
 
 # generate a gaussian
-gaussian = function(x, mu, sigma, scale=c("unit.height", "unit.area")) {
+#' @export
+my.gaussian = function(x, mu, sigma, scale=c("unit.height", "unit.area")) {
   g = exp(-.5 * ((x - mu) / sigma) ^ 2)
 
   if (scale == 'unit.area') {

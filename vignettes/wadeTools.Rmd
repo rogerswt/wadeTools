@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 # load some libraries early to suppress messages for the vignette
 library(flowCore)
 library(flowViz)
+library(flowFP)
 library(splancs)
 library(sp)
 library(fields)

@@ -9,7 +9,7 @@ find.width(kde, frac = 0.5)
 \arguments{
 \item{kde}{The input kde}
 
-\item{frac}{The height (\link{0, 1}) at which to compute the width.}
+\item{frac}{The height in the interval 0,1 at which to compute the width.}
 }
 \value{
 A list with 4 elements:
