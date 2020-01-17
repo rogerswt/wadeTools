@@ -15,6 +15,7 @@
 #
 #' @docType package
 #' @name wadeTools
+#' @title wadeTools package of moderately useful flow cytometry functions.
 #' @importFrom grDevices chull colorRampPalette contourLines dev.off dev.print hsv png
 #' @importFrom graphics abline axis box layout lines par points polygon segments text title
 #' @importFrom methods as is new show
