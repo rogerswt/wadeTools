@@ -164,6 +164,13 @@ smooth.contour <- function (blob, npts=5) {
 }
 
 # Worker function - what is the centroid of a contour? Assumes cont is a matrix
+#' @title Centroid of a Blob Contour
+#' @description Find the center of a blob, defined as the mean of the vertices
+#' of the blob.
+#' @param blob A polygon, for example the result of blob.boundary()
+#' the smoother the result.
+#' @return The 2-dimensional blob centroid.
+#' @export
 centroid = function (cont) {
   nr = nrow(cont)
   if ((cont[1,1] == cont[nr,1]) && (cont[1,2] == cont[nr,2])) {
