@@ -186,6 +186,11 @@ swap.names = function(ff) {
   # swap fl names
   dname = parameters(ff)$name[fl_params]
   pname = parameters(ff)$desc[fl_params]
+  # handle the case that parameters are recorded but not named in desc
+  idx = which(is.na(pname))
+  if (length(idx) != 0) {
+    pname[idx] = tight("blank", 1:length(idx))
+  }
   parameters(ff)$desc[fl_params] = dname
   colnames(ff)[fl_params] = pname
   parameters(ff)$name[fl_params] = pname
