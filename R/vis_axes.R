@@ -68,10 +68,18 @@ ax <- function (axis = 1, type = c("biexp", "log", "linear"), max_channel = 2621
     return()
   }
   axis(side=axis, all.ticks, label=FALSE, tcl=-0.25)
-  axis(side=axis, at=major, lwd.ticks=ticksize, label=make.labels(start_decade, decades),...)
+  axis(side=axis, at=major, lwd.ticks=ticksize, label=tick.labels(start_decade, decades),...)
 }
 
-make.labels <- function (first_decade, last_decade) {
+
+#' @title Label (Quasi-)Logarithmic Tickmarks
+#' @description Create powers-of-ten tickmark labels
+#' @param first_decade First decade (e.g. 1 would correspond to 10^1)
+#' @param last_decade Last decade (e.g. 5 would correspond to 10^5)
+#' @return A list of parsed labels suitable for the "label" parameter of \link{ax}
+#' or \link[graphics]{axis}.
+#' @export
+tick.labels <- function (first_decade, last_decade) {
   label <- vector('character')
   n_labels <- last_decade - first_decade + 1
   for (i in 1:n_labels) {
