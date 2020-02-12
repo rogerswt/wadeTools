@@ -17,12 +17,12 @@ Depends:
     flowViz, 
     KernSmooth,
     splancs, 
+    fields,
     flowFP
 RoxygenNote: 7.0.2
 Imports: 
     splus2R, 
     sp, 
-    fields,
     lattice,
     methods,
     wmtsa
