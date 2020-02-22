@@ -46,7 +46,7 @@
 pplot <- function (ff, parameters, blueBackground=FALSE, showZero=FALSE, nbin=501, bandwidth=0.001,
                    cr = blob_color(blueBackground=FALSE), col = "black", nrpoints = 0,
                    max_channel = 262143,
-                   tx=c("biexp", "log", "linear"), ty=c("biexp", "log", "linear"),
+                   tx=c("biexp", "asinh", "log", "linear"), ty=c("biexp", "asinh", "log", "linear"),
                    plotaxt = TRUE,  ticksize=1, ...) {
 
   requireNamespace("flowCore")

@@ -32,7 +32,7 @@
 #' ax(axis = 1, type = 'biexp')
 #' ax(axis = 2, type = 'log')
 #' @export
-ax <- function (axis = 1, type = c("biexp", "log", "linear"), max_channel = 262143, ticksize = 2, ...) {
+ax <- function (axis = 1, type = c("biexp", "asinh", "log", "linear"), max_channel = 262143, ticksize = 2, ...) {
 
   type       = match.arg(type)
 
@@ -41,7 +41,7 @@ ax <- function (axis = 1, type = c("biexp", "log", "linear"), max_channel = 2621
 
   all.ticks<-NULL
 
-  if (!(type %in% c("biexp", "log", "linear"))) {
+  if (!(type %in% c("biexp", "asinh", "log", "linear"))) {
     cat ("invalid axis type\n")
     return()
   }
@@ -62,6 +62,15 @@ ax <- function (axis = 1, type = c("biexp", "log", "linear"), max_channel = 2621
     }
     all.ticks <- biexp.transform(all.ticks);
     major     <- biexp.transform(major);
+  }
+  if (type == "asinh") {
+    start_decade=2
+    major<-(10^(start_decade:decades))
+    for(i in 1:(length(major)-1)){
+      all.ticks<-c(all.ticks,seq(major[i],major[i+1],l=10))
+    }
+    all.ticks <- asinh.transform(all.ticks);
+    major     <- asinh.transform(major);
   }
   if (type == "linear") {
     axis (side=axis)

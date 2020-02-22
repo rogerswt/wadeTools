@@ -75,7 +75,7 @@ get_sample = function(fn, compensate=TRUE, transform=TRUE, derail=TRUE, nice.nam
 #' in detail.
 #' @return The transformed flowFrame.
 #' @export
-doTransform <- function(ff,cols = c(1:5, 7:13),method = c("biexp","log","linear"), fac = 5.4/262143) {
+doTransform <- function(ff,cols = c(1:5, 7:13),method = c("biexp", "asinh", "log","linear"), fac = 5.4/262143) {
 
   requireNamespace("flowCore")
 
@@ -83,17 +83,22 @@ doTransform <- function(ff,cols = c(1:5, 7:13),method = c("biexp","log","linear"
     method = match.arg(method)
     if (method == "biexp") {
       bx <- biexpTransform(jitter = F)
-      bxlist <- transformList (flowCore::colnames(ff)[cols], bx)
+      bxlist <- transformList(flowCore::colnames(ff)[cols], bx)
       return(flowCore::transform(ff, bxlist))
+    }
+    if (method == "asinh") {
+      lx <- wadeTools::asinhTransform()
+      lxlist <- transformList(flowCore::colnames(ff)[cols], lx)
+      return(flowCore::transform(ff, lxlist))
     }
     if (method == "log") {
       lx <- logTransform()
-      lxlist <- transformList (flowCore::colnames(ff)[cols], lx)
+      lxlist <- transformList(flowCore::colnames(ff)[cols], lx)
       return(flowCore::transform(ff, lxlist))
     }
     if (method == "linear") {
-      lx <- linearTransform(a=fac)
-      lxlist <- transformList (flowCore::colnames(ff)[cols], lx)
+      lx <- linearTransform(a = fac)
+      lxlist <- transformList(flowCore::colnames(ff)[cols], lx)
       return(flowCore::transform(ff, lxlist))
     }
   }
