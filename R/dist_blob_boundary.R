@@ -111,7 +111,7 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 
 	# the convex option searches for the largest contour that remains convex
 	if (convex) {
-	  tol = 1e-3   # tolerance for convexity
+	  tol = 5e-3   # tolerance for convexity
 	  # update location based on what we've found
 	  location = centroid(out)
 
@@ -121,6 +121,7 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 	    prev = out
 	    cont <- contourLines(kde$x1, kde$x2, kde$fhat, levels = h)
 	    out = nearest_contour(cont, location, parameters)
+	    out = smooth.contour(out)    # avoiding a small fluctation leading to early termination
 	    cx = polygon.convexity(out)
 	    #DEBUG: cat("h =", h, ", convexity =", cx, "\n")
 	    if (cx < 1.0 - tol) {
