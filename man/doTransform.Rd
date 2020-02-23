@@ -7,7 +7,7 @@
 doTransform(
   ff,
   cols = c(1:5, 7:13),
-  method = c("biexp", "log", "linear"),
+  method = c("biexp", "asinh", "log", "linear"),
   fac = 5.4/262143
 )
 }

@@ -15,8 +15,8 @@ pplot(
   col = "black",
   nrpoints = 0,
   max_channel = 262143,
-  tx = c("biexp", "log", "linear"),
-  ty = c("biexp", "log", "linear"),
+  tx = c("biexp", "asinh", "log", "linear"),
+  ty = c("biexp", "asinh", "log", "linear"),
   plotaxt = TRUE,
   ticksize = 1,
   ...

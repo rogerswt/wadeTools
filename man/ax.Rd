@@ -6,7 +6,7 @@
 \usage{
 ax(
   axis = 1,
-  type = c("biexp", "log", "linear"),
+  type = c("biexp", "asinh", "log", "linear"),
   max_channel = 262143,
   ticksize = 2,
   ...
