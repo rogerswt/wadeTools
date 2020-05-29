@@ -163,7 +163,9 @@ clean.fp = function(ff, parameters=NULL, nbin=96, show=FALSE) {
 }
 
 show.bad.events = function (ff, parameter) {
-  pplot(ff, c("Time", parameter), tx='linear', ylim=bx(c(-1000, 250000)))
+  mxx = max(exprs(ff)[, "Time"])
+  mnx = min(exprs(ff)[, "Time"])
+  pplot(ff, c("Time", parameter), tx='linear', xlim = c(mnx, mxx), ylim=bx(c(-1000, 250000)))
   ff.bad = Subset(ff, rectangleGate("clean"=c(-.5,.5)))
   # points (exprs(ff.bad)[,"Time"], exprs(ff.bad)[,parameter], pch=20, cex=.2, col='gray')
   points (exprs(ff.bad)[,"Time"], rep(bx(2e5), nrow(ff.bad)), pch=20, cex=.2, col='black')
