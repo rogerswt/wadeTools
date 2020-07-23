@@ -24,7 +24,6 @@ Imports:
     splus2R, 
     sp, 
     lattice,
-    methods,
-    wmtsa
+    methods
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
