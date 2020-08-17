@@ -31,9 +31,9 @@ time.slice = function(ff, nbin = 96) {
   for (i in 1:nbin) {
     start = cuts[i]
     end = cuts[i + 1]
-    flist[[i]] = new("flowFrame",
+    flist[[i]] = suppressWarnings(new("flowFrame",
                       parameters = parameters(ff),
-                      description = description(ff))
+                      description = description(ff)))
     exprs(flist[[i]]) = exprs(ff)[start:end, ]
     bin.indices[[i]] = start:end
   }
