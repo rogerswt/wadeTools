@@ -18,7 +18,7 @@
 ############################################################
 
 kernel_function <- function(x, a = 0.002) {
-    return (log(0.5*(x + sqrt((x)^2 +1/a^2)))/log(10))
+    return(log(0.5*(x + sqrt((x)^2 + 1 / a^2)))/log(10))
 }
 
 biexp.transform  <- function(x, a = 0.002, full_scale = 262143, jitter = TRUE) {
