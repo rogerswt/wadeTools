@@ -169,7 +169,7 @@ clean.fp = function(ff,
   pdata = rbind(pdata, list("clean", "<NA>", 262144, 0, 1))
   rownames(pdata)[nrow(pdata)] = last.pname
 
-  res.ff = flowFrame(tmpmat, parameters = as(pdata, "AnnotatedDataFrame"))
+  res.ff = new("flowFrame", exprs = tmpmat, parameters = as(pdata, "AnnotatedDataFrame"))
 
   if (show) {
     for (p in parameters) {
