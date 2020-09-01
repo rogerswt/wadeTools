@@ -29,7 +29,7 @@
 #' us avoid mistakes.
 #' @return A flowFrame, properly processed.
 #' @export
-get_sample = function(fn, compensate=TRUE, transform=TRUE, derail=TRUE, nice.names = TRUE, verbose=FALSE) {
+get_sample = function(fn, compensate = TRUE, transform = TRUE, derail = TRUE, nice.names = TRUE, verbose = FALSE) {
 
 
   requireNamespace("flowCore")
