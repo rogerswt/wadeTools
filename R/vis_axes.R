@@ -98,3 +98,22 @@ tick.labels <- function (first_decade, last_decade) {
 
   return(ex)
 }
+
+gg_tick_labels = function(major) {
+  label = vector(mode = 'character')
+  # separate negative and positive major tick marks
+  idx_pos = which(major > 0)
+  idx_neg = which(major < 0)
+  k = 1
+  for (i in idx_neg) {
+    label[k] = paste("-10^", log10(-major[i]), sep = "")
+    k = k + 1
+  }
+  for (i in idx_pos) {
+    label[k] = paste("10^", log10(major[i]), sep = "")
+    k = k + 1
+  }
+  ex = parse(text = label)
+
+  return(ex)
+}

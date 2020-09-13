@@ -19,8 +19,7 @@ Depends:
     splancs, 
     fields,
     flowFP,
-    ggplot2,
-    ggcyto
+    ggplot2
 RoxygenNote: 7.1.1
 Imports: 
     splus2R, 

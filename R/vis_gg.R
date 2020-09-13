@@ -23,6 +23,7 @@
 #' Currently, one of c("linear", "biexp", "asinh", "log").
 #' @param trans_fl The transformation that was applied to the fluorescence parameters of ff.
 #' Currently, one of c("linear", "biexp", "asinh", "log").
+#' @param indicate_zero Boolean, should we indicate the location of 0?
 #' @param xlim The limits of the plot in the x direction. NULL will apply sensible defaults.
 #' @param ylim The limits of the plot in the y direction. NULL will apply sensible defaults.
 #' @return A ggplot object.
@@ -67,9 +68,9 @@ ggflow = function(ff,
                   resolution = c("medium", "coarse", "fine"),
                   trans_sc = c("linear", "biexp", "asinh", "log"),
                   trans_fl = c("biexp", "asinh", "log", "linear"),
+                  indicate_zero = TRUE,
                   xlim = NULL, ylim = NULL) {
   requireNamespace("ggplot2")
-  requireNamespace("ggcyto")
   requireNamespace("viridis")
   colors = match.arg(colors)
   trans_sc = match.arg(trans_sc)
@@ -89,9 +90,15 @@ ggflow = function(ff,
 
   # this crazy ".data" indexing is described in
   # https://dplyr.tidyverse.org/articles/programming.html
-  p = ggplot(ff, mapping = aes(x = .data[[params[1]]], y = .data[[params[2]]]))
+  dat = data.frame(exprs(ff), check.names = FALSE)
+  p = ggplot(dat, mapping = aes(x = .data[[params[1]]], y = .data[[params[2]]]))
   binning = geom_bin2d(bins = bins, na.rm = TRUE)
   p = p + binning
+
+  if (indicate_zero) {
+    p = p + geom_hline(yintercept = 0, linetype = 'dotdash')
+    p = p + geom_vline(xintercept = 0, linetype = 'dotdash')
+  }
 
   # apply a theme
   My_Theme = theme(
@@ -152,28 +159,38 @@ ggflow = function(ff,
 
 ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "linear")) {
   method = match.arg(method)
-  start_decade = 2
-  decades = 8
-  major <- (10^(start_decade:decades))
-  all.ticks <- NULL
-  for (i in 1:(length(major) - 1)) {
-    all.ticks <- c(all.ticks, seq(major[i], major[i + 1], l = 10))
+
+  neg_major = -(10^(2:10))
+  pos_major = 10^(2:10)
+  major = c(neg_major, pos_major)
+  # all.ticks <- NULL
+  # for (i in 1:(length(major) - 1)) {
+  #   all.ticks <- c(all.ticks, seq(major[i], major[i + 1], l = 10))
+  # }
+  neg.ticks = vector(mode = 'numeric')
+  for (i in 1:(length(neg_major) - 1)) {
+    neg.ticks = c(neg.ticks, seq(neg_major[i], neg_major[i + 1], l = 10))
   }
+  pos.ticks = vector(mode = 'numeric')
+  for (i in 1:(length(pos_major) - 1)) {
+    pos.ticks = c(pos.ticks, seq(pos_major[i], pos_major[i + 1], l = 10))
+  }
+  all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
   if (method == "biexp") {
+    labels = gg_tick_labels(major)
     major = bx(major)
     all.ticks <- bx(all.ticks)
-    labels = tick.labels(start_decade, decades)
-    range = c(0, bx(2^18))
+    range = c(bx(-200), bx(2^18))
   } else if (method == "asinh") {
+    labels = gg_tick_labels(major)
     major = w.arcsinh(major)
     all.ticks <- w.arcsinh(all.ticks)
-    labels = tick.labels(start_decade, decades)
-    range = c(0, w.arcsinh(2^18))
+    range = c(w.arcsinh(-200), w.arcsinh(2^18))
   } else if (method == "log") {
+    labels = gg_tick_labels(major)
     major = log10(major)
     all.ticks <- log10(all.ticks)
-    labels = tick.labels(start_decade, decades)
-    range = c(0, log10(2^18))
+    range = c(log10(1), log10(2^18))
   } else if (method == 'linear') {
     idx = which(exprs(ff)[, param] >= 0)
     major = pretty(exprs(ff)[idx, param])
