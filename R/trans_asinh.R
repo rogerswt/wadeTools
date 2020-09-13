@@ -51,7 +51,7 @@ inv.asinh.transform = function(x, cofactor = 150) {
 #' See \code{\link{biexpTransform}} for flowCore compatibility.
 #' @return A transformed flowFrame
 #' @export
-w.arcsinh <- function (ff, cofactor = 150, params) {
+w.arcsinh <- function(ff, cofactor = 150, params) {
 
   # if using symbolic names for params, convert to numeric
   if (is.character(params)) {
@@ -63,7 +63,7 @@ w.arcsinh <- function (ff, cofactor = 150, params) {
 
   # compute transformed object
   for (parm in params) {
-    exprs(fout)[,parm] <- asinh.transform (exprs(ff)[,parm], cofactor)
+    exprs(fout)[,parm] <- asinh.transform(exprs(ff)[,parm], cofactor)
   }
 
   # set the minRange and maxRange values appropriately
