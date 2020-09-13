@@ -52,7 +52,7 @@
 #' p = ggflow(ff, c("CD4PETR", "CD8Q705"))
 #' p + labs(title = "Another plot with a title")
 #'
-#' # Finally, some of the other color schemes
+#' # Check out the other color schemes
 #' library("gridExtra")
 #' p1 = ggflow(ff, c("SSC-A", "LIVEDEAD")) + labs(title = "flowjo") + theme(legend.position = 'right')
 #' p2 = ggflow(ff, c("SSC-A", "LIVEDEAD"), colors = "v") + labs(title = "viridis") + theme(legend.position = 'right')
@@ -61,6 +61,8 @@
 #' p = grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 #' p
 #'
+#' # Override plot limits and default resolution
+#' ggflow(ff, c("CD45RAQ655","CD11BAPCCY7"), xlim = bx(c(-1e3,1e6)), ylim = bx(c(-1e3,1e6)), res = 'f')
 #' @export
 ggflow = function(ff,
                   params = c("FSC-A", "SSC-A"),
