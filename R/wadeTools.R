@@ -27,7 +27,8 @@
 #' @import flowCore
 #' @import flowViz
 #' @import flowFP
-
+#' @import ggplot2
+#' @import ggcyto
 NULL
 
 
