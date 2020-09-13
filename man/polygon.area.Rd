@@ -13,7 +13,7 @@ polygon.area(blob)
 The area of the polygon.
 }
 \description{
-Calculate the area of a blob (polygon).
+Calculate the area of a blob(polygon).
 }
 \details{
 See http://stackoverflow.com/questions/16285134/calculating-polygon-area.

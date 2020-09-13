@@ -4,6 +4,3 @@
 \name{wadeTools}
 \alias{wadeTools}
 \title{wadeTools package of moderately useful flow cytometry functions.}
-\description{
-wadeTools package of moderately useful flow cytometry functions.
-}

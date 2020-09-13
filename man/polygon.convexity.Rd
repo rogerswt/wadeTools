@@ -13,7 +13,7 @@ polygon.convexity(blob)
 The convexity of the polygon.
 }
 \description{
-Calculate the convexity of a blob (polygon).
+Calculate the convexity of a blob(polygon).
 }
 \details{
 Convexity is defined as the ratio of the area of a polygon to the area
