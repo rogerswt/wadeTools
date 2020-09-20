@@ -67,7 +67,7 @@
 ggflow = function(ff,
                   params = c("FSC-A", "SSC-A"),
                   colors = c("flowjo", "viridis", "plasma", "magma"),
-                  resolution = c("medium", "coarse", "fine"),
+                  resolution = c("medium", "very_coarse","coarse", "fine"),
                   trans_sc = c("linear", "biexp", "asinh", "log"),
                   trans_fl = c("biexp", "asinh", "log", "linear"),
                   indicate_zero = TRUE,
@@ -85,6 +85,8 @@ ggflow = function(ff,
     bins = 750
   } else if (resolution == "fine") {
     bins = 1000
+  } else if (resolution == "very_coarse") {
+    bins = 250
   }
 
   params_sc = detect_scatter_parameters(ff)
