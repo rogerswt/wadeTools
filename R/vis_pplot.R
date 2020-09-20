@@ -14,7 +14,8 @@
 #	It creates a plot that looks very much like FlowJo.
 #
 #' @title Draw a FlowJo-style (sort of) Plot
-#' @description Draw a picture, with colors reminiscent of FlowJo.
+#' @description Draw a picture, with colors reminiscent of FlowJo.  \strong{NOTE: this
+#' function is deprecated.  Please consider using \link[wadeTools]{ggflow} instead.}
 #' @param ff The flowFrame to be plotted
 #' @param parameters A vector of two parameters in ff.  May be either character or numeric
 #' @param blueBackground Logical, should the background be blue.  If false, you'll get a white

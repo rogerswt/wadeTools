@@ -8,7 +8,7 @@ ggflow(
   ff,
   params = c("FSC-A", "SSC-A"),
   colors = c("flowjo", "viridis", "plasma", "magma"),
-  resolution = c("medium", "coarse", "fine"),
+  resolution = c("medium", "very_coarse", "coarse", "fine"),
   trans_sc = c("linear", "biexp", "asinh", "log"),
   trans_fl = c("biexp", "asinh", "log", "linear"),
   indicate_zero = TRUE,

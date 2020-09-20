@@ -55,7 +55,8 @@ background (like FlowJo)}
 \item{...}{Additional graphical parameters passed to \code{flowCore \link[flowCore]{flowFrame-class}}}
 }
 \description{
-Draw a picture, with colors reminiscent of FlowJo.
+Draw a picture, with colors reminiscent of FlowJo.  \strong{NOTE: this
+function is deprecated.  Please consider using \link[wadeTools]{ggflow} instead.}
 }
 \examples{
 
