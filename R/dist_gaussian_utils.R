@@ -161,6 +161,6 @@ gaussian_dist = function(lambda, sigma, mu, x = seq(-1, 5, length.out = 200)) {
 }
 
 bax = function(axis = 1) {
-  ax(axis = axis, instrument = 'diva', type = 'biexp')
+  ax(axis = axis, type = 'biexp')
 }
 
