@@ -45,6 +45,9 @@
 #' # another plot of fluorescence parameters.  Note the biexponential axes.
 #' ggflow(ff, c("CD4PETR", "CD8Q705"))
 #'
+#' # one fluorescence (biexp) versus one scattering (linear)
+#' ggflow(ff, c("SSC-A", "CD3Q605"))
+#'
 #' # Add a title
 #' ggflow(ff, c("CD4PETR", "CD8Q705")) + labs(title = "Title of Plot")
 #'
@@ -54,15 +57,29 @@
 #'
 #' # Check out the other color schemes
 #' library("gridExtra")
-#' p1 = ggflow(ff, c("SSC-A", "LIVEDEAD")) + labs(title = "flowjo") + theme(legend.position = 'right')
-#' p2 = ggflow(ff, c("SSC-A", "LIVEDEAD"), colors = "v") + labs(title = "viridis") + theme(legend.position = 'right')
-#' p3 = ggflow(ff, c("SSC-A", "LIVEDEAD"), colors = "m") + labs(title = "magma") + theme(legend.position = 'right')
-#' p4 = ggflow(ff, c("SSC-A", "LIVEDEAD"), colors = "p") + labs(title = "plasma") + theme(legend.position = 'right')
+#' p1 = ggflow(ff, c("CD3Q605", "LIVEDEAD")) + labs(title = "flowjo") + theme(legend.position = 'right')
+#' p2 = ggflow(ff, c("CD3Q605", "LIVEDEAD"), colors = "v") + labs(title = "viridis") + theme(legend.position = 'right')
+#' p3 = ggflow(ff, c("CD3Q605", "LIVEDEAD"), colors = "m") + labs(title = "magma") + theme(legend.position = 'right')
+#' p4 = ggflow(ff, c("CD3Q605", "LIVEDEAD"), colors = "p") + labs(title = "plasma") + theme(legend.position = 'right')
 #' p = grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
 #' p
 #'
 #' # Override plot limits and default resolution
 #' ggflow(ff, c("CD45RAQ655","CD11BAPCCY7"), xlim = bx(c(-1e3,1e6)), ylim = bx(c(-1e3,1e6)), res = 'f')
+#'
+#' # make a plot and add some blob boundaries
+#' params = c("SSC-A", "CD3Q605")
+#' x_range = 0.5
+#' p1 = ggflow(ff, params)
+#' bb1 = blob.boundary(ff, c("SSC-A", "CD3Q605"), x_range = c(x_range, Inf), location = c(1.5, bx(8000)), height = .25)
+#' b1 = geom_path(bb1, mapping = aes(x = `SSC-A`, y = CD3Q605, group = 1))
+#' bb2 = blob.boundary(ff, c("SSC-A", "CD3Q605"), x_range = c(x_range, Inf), location = c(3, bx(500)), height = .25)
+#' b2 = geom_path(bb2, mapping = aes(x = `SSC-A`, y = CD3Q605, group = 1))
+#' bb3 = blob.boundary(ff, c("SSC-A", "CD3Q605"), x_range = c(x_range, Inf), location = c(0, 0), height = .25)
+#' b3 = geom_path(bb3, mapping = aes(x = `SSC-A`, y = CD3Q605, group = 1))
+#' vline = geom_vline(aes(xintercept = x_range), linetype = "dotted")
+#' p1 + b1 + b2 + b3 + vline
+#'
 #' @export
 ggflow = function(ff,
                   params = c("FSC-A", "SSC-A"),
