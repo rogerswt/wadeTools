@@ -48,7 +48,7 @@
 #' of parameters may overwhelm your graphics capability.
 #' @return The calculated spillover matrix.
 #' @export
-compute.spill <-
+compute_spill <-
   function(ff,
             fsc.thresh = 30000,
             path = NULL,
@@ -385,7 +385,6 @@ locate.blobs = function(ff,
   if (show) {
     pplot(ff,
            param,
-           instrument = 'diva',
            tx = 'biexp',
            ty = 'biexp')
     for (i in 1:length(contours)) {
