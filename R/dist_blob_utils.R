@@ -26,7 +26,7 @@ circle <- function(blob, radius, length = 100) {
   }
   out[length + 1, ] <-
     out[1, ]	# join the beginning and end(aesthetics)
-  out
+  m2df(out)
 }
 
 # draw a circle around a point
@@ -44,7 +44,7 @@ circle.point = function(pt, radius, length = 100) {
   }
   out[length + 1, ] <-
     out[1, ]	# join the beginning and end(aesthetics)
-  out
+  m2df(out)
 }
 
 # helper function
@@ -55,7 +55,7 @@ close.contour = function(blob) {
   if ((x[1] != x[npts]) |(y[1] != y[npts])) {
     blob = rbind(blob, c(x[1], y[1]))
   }
-  blob
+  m2df(blob)
 }
 #' @title Get the Convex Hull of a Blob
 #' @description find the convex hull of a polygon
@@ -68,13 +68,13 @@ get.hull <- function(blob) {
     cnames = names(blob)
     blob = matrix(blob, nrow = 1, ncol = 2)
     colnames(blob) = cnames
-    return(blob)
+    return(m2df(blob))
   }
-  if (!is.matrix(blob)) {
+  if (is.list(blob) & !is.data.frame(blob)) {
     cnames = names(blob)
     blob = matrix(blob, ncol = 2)
     colnames(blob) = cnames
-    return(blob)
+    return(m2df(blob))
   }
   x <- blob[, 1]
   y <- blob[, 2]
@@ -85,7 +85,7 @@ get.hull <- function(blob) {
   # close the contour
   poly <- rbind(poly, poly[1, ])
   colnames(poly) <- colnames(blob)
-  return(poly)
+  return(m2df(poly))
 }
 
 #' @title Inflate a Blob Contour
@@ -117,7 +117,7 @@ inflate.contour <- function(blob, dist) {
 
   new_poly <- as.points(x_infl, y_infl)
   colnames(new_poly) <- colnames(blob)
-  return(new_poly)
+  return(m2df(new_poly))
 
 }
 
@@ -160,7 +160,7 @@ smooth.contour <- function(blob, npts = 5) {
 
   new_poly <- as.points(x_smo, y_smo)
   colnames(new_poly) <- colnames(blob)
-  return(new_poly)
+  return(m2df(new_poly))
 
 }
 
@@ -231,6 +231,19 @@ cont2mat = function(contr, param) {
   mat
 }
 
+# convert a matrix to a dataframe, preserving original colnames
+m2df = function(m) {
+  if (is.data.frame(m)) {
+    return(m)
+  }
+
+  cnames = colnames(m)
+  df = data.frame(m)
+  colnames(df) = cnames
+
+  df
+}
+
 #' @title Calculate a Blob's Area
 #' @description Calculate the area of a blob(polygon).
 #' @param blob A polygon, for example the result of blob.boundary()
@@ -238,7 +251,7 @@ cont2mat = function(contr, param) {
 #' @details See http://stackoverflow.com/questions/16285134/calculating-polygon-area.
 #' @export
 polygon.area = function(blob) {
-  if (!is.matrix(blob)) {
+  if (is.list(blob) & !is.data.frame(blob)) {
     blob = cont2mat(blob, param = c("x", "y"))
   }
 

@@ -22,6 +22,8 @@
 #' @param ff The input flowFrame
 #' @param parameters Exactly 2 parameters included in ff
 #' @param rotate Rotation angle (in degrees) of the blob you're looking for
+#' @param x_range Range of x values to consider (default = NULL implies all x)
+#' @param y_range Range of y values to consider (default = NULL implies all y)
 #' @param location The target location of the blob (ignored if strongest = TRUE)
 #' @param strongest Logical, whether to look for the blob containing the highest density
 #' @param bandwidth 2D measure of bandwidth used to compute the Kernel Density Estimate
@@ -50,6 +52,7 @@
 #' to gate data using the **flowCore** function \code{polygonGate(.gate = bb)}.
 #' @export
 blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
+                           x_range = NULL, y_range = NULL,
                            location, strongest = FALSE,
                            bandwidth=c(.02, .02), gridsize=c(201, 201),
                            height=.1, convex = FALSE,
@@ -61,6 +64,15 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 
   if (!(is(ff)[[1]]) == "flowFrame") {
 		stop ("first argument must be a flowFrame\n")
+  }
+
+	if (!is.null(x_range)) {
+	  expres = tight("list('", parameters[1], "' = c(", x_range[1], ", ", x_range[2], "))")
+	  ff = Subset(ff, rectangleGate(filterId = "tmp", .gate = eval(parse(text = expres))))
+	}
+	if (!is.null(y_range)) {
+	  expres = tight("list('", parameters[2], "' = c(", y_range[1], ", ", y_range[2], "))")
+	  ff = Subset(ff, rectangleGate(filterId = "tmp", .gate = eval(parse(text = expres))))
 	}
 
 	# extract a matrix of values
@@ -134,6 +146,12 @@ blob.boundary <- function (ff, parameters=c("FSC-A", "SSC-A"), rotate = 0.0,
 	if (rotate != 0) {
 	  out = rotate(out, center = location, degrees = -rotate)
 	}
+	out
+
+	# convert to a dataframe for ggplot compatibility
+	out = data.frame(out)
+	colnames(out) = parameters
+
 	out
 }
 
