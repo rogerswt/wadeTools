@@ -84,17 +84,18 @@ plot(fft, c("Green D 610/20-A", "Violet B 705/70-A"), main = "CD4/CD8")
 ff = get_sample(fn = filename)
 
 # make a couple of pictures
-pplot(ff, c("FSC-A", "SSC-A"), tx = 'linear', ty = 'linear', main = "Scattering")
-pplot(ff, c("CD4PETR", "CD8Q705"), 
-      xlim = bx(c(-1000, 2^18)), ylim = bx(c(-1000, 2^18)), 
-      main = "CD4/CD8")
+mytheme = theme(plot.title = element_text(size = 10)) + 
+  theme(axis.title.x = element_text(size = rel(0.75))) + 
+  theme(axis.title.y = element_text(size = rel(0.75)))
+ggflow(ff, c("FSC-A", "SSC-A")) + ggtitle("Scattering") + mytheme
+ggflow(ff, c("CD4PETR", "CD8Q705")) + ggtitle("CD4/CD8") + mytheme
 ```
 
 Comparing the two methods, the **wadeTools** approach accomplishes all of the work in a single line of code, using **get_sample()**. The **flowCore** approach on the other hand requires several lines, and requires that the user master (and remember) the somewhat arcane syntax of the transform methodology.  **flowCore** also has fairly primitive default graphics.
 
 In **wadeTools**, the function **get_sample()** does a bunch of heavy lifting. It reads the file, applies the compensation matrix in the header, derails, does a linear transform on scattering parameters and a custom biexponential transformation on the fluorescence parameters, and swaps the conjugate names for the detector names.  Of course, inside this function there's lots going on, but the nice thing is that's kind of hidden from you and you needn't worry about it on a day-to-day basis.  And if you *do* want to worry about it you can always consult the source code!
 
-Compare the two sets of figures and you'll notice that the labeling of fluorescence parameters in the **wadeTools** version is a lot more user-friendly than the default labeling with **flowCore**.  You'll also notice that the rendering of the distributions is a lot more like what you're accustomed to looking at (especially if you're a FlowJo user).  You will also note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations" (this really just means that the default parameters of the flowCore biexp are poorly chosen).  **This is a warning to be careful that your transformation makes sense.**
+Compare the two sets of figures and you'll notice that the labeling of fluorescence parameters in the **wadeTools** version is a lot more user-friendly than the default labeling with **flowCore**.  You'll also notice that the rendering of the distributions is a lot more like what you're accustomed to looking at (especially if you're a FlowJo user).  You will also note one more thing:  the default biexponential transform in flowCore is not appropriate.  It over-squashes the negatives, leading to a splitting around zero, which generates "false populations" (this really just means that the default parameters of the flowCore biexp are poorly chosen).  **This is a warning to be careful that your transformation makes sense.**  Finally, it's important to know that **ggflow()** by default assumes that scattering parameters have been linearly transformed and fluorescence parameters have been transformed using the biexponential transform implemented in **wadeTools** (which is consistent with **get_sample** defaults).
 
 So, not only is the **wadeTools** approach much simpler from a code perspective, the result is quite a bit nicer (IMHO).
 
@@ -111,20 +112,22 @@ All that said, let's see if we can find the lymphocytes in our example file:
 # first get rid of debris, which can confuse blob.boundary
 thresh_debris_fsc = 0.25
 thresh_debris_ssc = 0.25
-tmp = Subset(ff, rectangleGate("FSC-A" = c(thresh_debris_fsc, Inf), "SSC-A" = c(thresh_debris_ssc, Inf)))
-bb = blob.boundary(ff = tmp, parameters = c("FSC-A", "SSC-A"), location = c(2, 1), height = .5, convex = TRUE)
+bb = blob.boundary(ff = ff, parameters = c("FSC-A", "SSC-A"), 
+                   x_range = c(thresh_debris_fsc, Inf), y_range = c(thresh_debris_ssc, Inf), 
+                   location = c(2, 1), height = .5, convex = TRUE)
 
-pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
-lines(bb)    # draw the blob contour on top of the figure
-xline(thresh_debris_fsc, lty = 'dotdash')   # show the debris thresholds
-yline(thresh_debris_ssc, lty = 'dotdash')
+p = ggflow(ff, c("FSC-A","SSC-A"))
+b = geom_path(bb, mapping = aes(x = `FSC-A`, y = `SSC-A`))
+xl = geom_vline(aes(xintercept = thresh_debris_fsc), linetype = "dotted")
+yl = geom_hline(aes(yintercept = thresh_debris_ssc), linetype = "dotted")
+p + b + xl + yl
 
 # check how many events are inside the gate
 ff_gated = Subset(ff, polygonGate(.gate = bb))
 nrow(ff)
 nrow(ff_gated)
 
-# Out of the 198k events in the original file, 102k are inside the blob boundary
+# Out of the 198k events in the original file, 101k are inside the blob boundary
 ```
 
 **blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.5, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
@@ -134,17 +137,17 @@ You should play around with **blob.boundary()** on your data.  Specifically, try
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
 bb_inflated = inflate.contour(bb, dist = 0.25)
-pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
-lines(bb)                                   # the original contour, in black
-lines(bb_inflated, lwd = 3, col = 'red')    # the inflated contour, in red and heavy
-
+p = ggflow(ff = ff, params = c("FSC-A","SSC-A"))
+b1 = geom_path(bb, mapping = aes(x = `FSC-A`, y = `SSC-A`))
+b2 = geom_path(bb_inflated, mapping = aes(x = `FSC-A`, y = `SSC-A`), color = 'indianred2', size = 2)
+p + b1 + b2   # show original blob in black, inflated blob as a fat red line
 # re-gate
 ff_gated = Subset(ff, polygonGate(.gate = bb_inflated))
 
 # re-count gated events
 nrow(ff_gated)
 
-# note that the number of gated events rose from 102k to 121k due to the fact
+# note that the number of gated events rose from 101k to 121k due to the fact
 # that the gate is bigger, and thus encircles ~12% more events
 ```
 
@@ -186,32 +189,34 @@ sprintf("eliminating %d events in bad slices (%.1f%%)", nd, 100 * nd / no)
 
 ##### Gate 2: Singlets
 There are lots of ideas on how to do this.  Here's one:
-```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
+```{r, eval = TRUE, echo = TRUE, fig.show='hold', fig.width=7, fig.height=7}
 ###################
 # FSC singlets
 ###################
-pplot(ff_clean, c("FSC-H", "FSC-W"), tx = 'linear', ty = 'linear')
+p = ggflow(ff_clean, c("FSC-H", "FSC-W"))
 bb = blob.boundary(ff, parameters = c("FSC-H", "FSC-W"), height = .1, strongest = TRUE)
 bb = get.hull(bb)                      # convex hull of bb
 bb_infl = inflate.contour(bb, dist = .1)    # inflate a bit
-fscw_thresh = max(bb_infl[, 2])             # col 2 is FSC-W
-lines(bb)
-lines(bb_infl, lwd = 2)
-yline(fscw_thresh, lwd = 2, lty = 'dotdash', col = 'red')
+fscw_thresh = max(bb_infl$`FSC-W`)
+b1 = geom_path(bb, mapping = aes(x = `FSC-H`, y = `FSC-W`))
+b2 = geom_path(bb_infl, mapping = aes(x = `FSC-H`, y = `FSC-W`), size = 1.5)
+hline = geom_hline(mapping = aes(yintercept = fscw_thresh), color = "indianred2", size = 1.5, linetype = 'dotdash')
+p + b1 + b2 + hline
 ff_sing1 = Subset(ff_clean, rectangleGate("FSC-W" = c(-Inf, fscw_thresh)))
 
 
 ###################
 # SSC singlets
 ###################
-pplot(ff_sing1, c("SSC-H", "SSC-W"), tx = 'linear', ty = 'linear')
+p = ggflow(ff_sing1, c("SSC-H", "SSC-W"))
 bb = blob.boundary(ff, parameters = c("SSC-H", "SSC-W"), height = .1, strongest = TRUE)
 bb = get.hull(bb)                      # convex hull of bb
 bb_infl = inflate.contour(bb, dist = .1)    # inflate a bit
-fscw_thresh = max(bb_infl[, 2])             # col 2 is SSC-W
-lines(bb)
-lines(bb_infl, lwd = 2)
-yline(fscw_thresh, lwd = 2, lty = 'dotdash', col = 'red')
+fscw_thresh = max(bb_infl$`SSC-W`)
+b1 = geom_path(bb, mapping = aes(x = `SSC-H`, y = `SSC-W`))
+b2 = geom_path(bb_infl, mapping = aes(x = `SSC-H`, y = `SSC-W`), size = 1.5)
+hline = geom_hline(mapping = aes(yintercept = fscw_thresh), color = "indianred2", size = 1.5, linetype = 'dotdash')
+p + b1 + b2 + hline
 ff_sing2 = Subset(ff_sing1, rectangleGate("SSC-W" = c(-Inf, fscw_thresh)))
 
 # summarize how much we lost
@@ -221,28 +226,28 @@ nd = no - nc
 sprintf("eliminating %d non-singlet events (%.1f%%)", nd, 100 * nd / no)
 ```
 
-#####Gate 3: Lymphocytes
+##### Gate 3: Lymphocytes
 ```{r, eval = TRUE, echo = TRUE, fig.width=7, fig.height=7}
 
 # we'll do this just like in the earlier example
 thresh_debris_fsc = 0.25
 thresh_debris_ssc = 0.25
-tmp = Subset(ff_sing2, rectangleGate("FSC-A" = c(thresh_debris_fsc, Inf), "SSC-A" = c(thresh_debris_ssc, Inf)))
-bb = blob.boundary(ff = tmp, parameters = c("FSC-A", "SSC-A"), location = c(2, 1), height = .5, convex = TRUE)
+bb = blob.boundary(ff = ff, parameters = c("FSC-A", "SSC-A"), 
+                   x_range = c(thresh_debris_fsc, Inf), y_range = c(thresh_debris_ssc, Inf), 
+                   location = c(2, 1), height = .5, convex = TRUE)
 bb_inflated = inflate.contour(bb, dist = 0.25)
 
-pplot(ff, c("FSC-A","SSC-A"), tx = 'linear', ty = 'linear')
-lines(bb)    # draw the blob contour on top of the figure
-lines(bb_inflated, lwd = 3, col = 'red')    # the inflated contour, in red and heavy
-
-xline(thresh_debris_fsc, lty = 'dotdash')   # show the debris thresholds
-yline(thresh_debris_ssc, lty = 'dotdash')
+p = ggflow(ff, c("FSC-A","SSC-A"))
+b = geom_path(bb, mapping = aes(x = `FSC-A`, y = `SSC-A`))
+xl = geom_vline(aes(xintercept = thresh_debris_fsc), linetype = "dotted")
+yl = geom_hline(aes(yintercept = thresh_debris_ssc), linetype = "dotted")
+p + b + xl + yl
 
 ff_lymph = Subset(ff_sing2, polygonGate(.gate = bb_inflated))
 
 ```
 
-#####Gate 4: Live events
+##### Gate 4: Live events
 ```{r, eval = TRUE, echo = TRUE, fig.width=7, fig.height=7}
 # We will illustrate the use of Kernel Density Estimation of 1D probability distributions
 # to find a LIVEDEAD threshold
@@ -258,18 +263,17 @@ thresh_ld = res$x[min(which(res$x > bx(2000)))]
 ff_gated = Subset(ff_lymph, rectangleGate("LIVEDEAD" = c(-Inf, thresh_ld)))
 
 # visualize
-pplot(ff_lymph, c("LIVEDEAD", "SSC-A"), ty = 'linear')
-lines(kde$x, 5 * kde$y)     # factor of 5 just for visual appeal
-xline(res$x, lty = 'dotdash')                # show all minima we found
-xline(thresh_ld, lwd = 3, col = 'red')  # show the one we picked
+ggflow(ff_lymph, c("LIVEDEAD", "CD3Q605"), resolution = 'coarse', indicate_zero = FALSE) +
+   geom_polygon(aes(x = x, y = 5 * y), data = as.data.frame(kde), alpha = .2, color = 'black') +
+   geom_vline(xintercept = res$x, linetype = 'dotdash') +
+   geom_vline(xintercept = thresh_ld, color = 'indianred2', linetype = 'dotdash', size = 1.5)
 
-# summarize how much we lost
+# summarize how many events corresponded to non-live events
 no = nrow(ff_lymph)
 nc = nrow(ff_gated)
 nd = no - nc
 sprintf("eliminating %d dead events (%.1f%%)", nd, 100 * nd / no)
 ```
-
 
 ## more to come
 

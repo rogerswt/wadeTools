@@ -12,7 +12,7 @@ transformation,**bx**,Shorthand Function for Biexponential Transformation
 ,inv.biexp,Calculate an Inverse Biexponential Transformation
 ,biexpTransform,Create a FlowCore Compatible Transform Object
 ,boxcoxTransform,Create a FlowCore Compatible Transform Object
-visualization,**pplot**,Draw a FlowJo-style (sort of) Plot (DEPRECATED)
+visualization,**pplot**,Draw a FlowJo-style (sort of) Plot (**DEPRECATED**)
 ,**ggflow**,Draw a FlowJo-style (sort of) Plot (much more powerful version of pplot)
 ,ax,Draw Pretty Axes
 ,tick.labels,Label powers of 10 tickmarks
