@@ -135,9 +135,11 @@ nrow(ff_gated)
 # Out of the 198k events in the original file, 101k are inside the blob boundary
 ```
 
-**blob.boundary()** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.5, 1.0).  However, there's a subtle valley separating it from another, slightly dense patch to the left.  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
+**blob.boundary** is limited by the contrast in the data.  In this case, we're looking for the blob nearest the location c(2, 1).  You'll see with your eyes that there's a blob that looks to be about at c(1.5, 1.0).  Since we've specified **convex = TRUE**, and **height = .5**, the function will find the blob we're looking for, and search for the largest convex contour that encloses it.  The nearby blob causes that search to end at a fairly tight contour.
 
-You should play around with **blob.boundary()** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE, or log.transform to TRUE or FALSE (see the help page for **blob.boundary()**), and watch what happens.  Also experiment with pre-filtering (as in the above example) to eliminate confounding but uninteresting portions of the distribution.  There is certainly an art to effectively using **blob.boundary()**!
+You should play around with **blob.boundary** on your data.  Specifically, try different height and location values.  Try setting convex to TRUE or FALSE, or log.transform to TRUE or FALSE (see the help page for **blob.boundary**), and watch what happens.  Also experiment with pre-filtering (as in the above example with the use of the *x_range* and *y_range* arguments) to eliminate confounding but uninteresting portions of the distribution.  In this case there is a tiny but intense peak down very close to 0,0.  Such intense but essentially uninteresting components of a distribution are problematic for **blob.boundary** because it normalizes to the most intense peak.  This pushes other portions of the distribution down to the point that they're hard to find.  By first eliminating irrelevant regions, **blob.boundary** is able to re-normalize to more easily locate blobs of interest.
+
+There is certainly an art to effectively using **blob.boundary**!
 
 If you wanted this gate to be a bit more inclusive you could 'inflate' it a bit:
 ```{r, eval = TRUE, echo = TRUE, fig.width=5, fig.height=5}
