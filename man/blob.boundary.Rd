@@ -8,6 +8,8 @@ blob.boundary(
   ff,
   parameters = c("FSC-A", "SSC-A"),
   rotate = 0,
+  x_range = NULL,
+  y_range = NULL,
   location,
   strongest = FALSE,
   bandwidth = c(0.02, 0.02),
@@ -26,6 +28,10 @@ blob.boundary(
 \item{parameters}{Exactly 2 parameters included in ff}
 
 \item{rotate}{Rotation angle (in degrees) of the blob you're looking for}
+
+\item{x_range}{Range of x values to consider (default = NULL implies all x)}
+
+\item{y_range}{Range of y values to consider (default = NULL implies all y)}
 
 \item{location}{The target location of the blob (ignored if strongest = TRUE)}
 
