@@ -203,10 +203,13 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
     all.ticks <- bx(all.ticks)
     range = c(bx(-200), bx(2^18))
   } else if (method == "asinh") {
+    neg_major = -(10^(0:10))
+    pos_major = 10^(0:10)
+    major = c(neg_major, pos_major)
     labels = gg_tick_labels(major)
-    major = w.arcsinh(major)
-    all.ticks <- w.arcsinh(all.ticks)
-    range = c(w.arcsinh(-200), w.arcsinh(2^18))
+    major = asx(major)
+    all.ticks <- asx(all.ticks)
+    range = c(asx(0), asx(2^14))
   } else if (method == "log") {
     labels = gg_tick_labels(major)
     major = log10(major)
