@@ -4,7 +4,7 @@
 \alias{asinhTransform}
 \title{Create a FlowCore Compatible Transform Object}
 \usage{
-asinhTransform(transformId = "myasinh", cofactor = 150, jitter = TRUE)
+asinhTransform(transformId = "myasinh", cofactor = 5, jitter = TRUE)
 }
 \arguments{
 \item{transformId}{FlowCore compatible transformId}

@@ -19,7 +19,7 @@
 #	and should NOT be exposed
 ############################################################
 
-asinh.transform = function(x, cofactor = 150, jitter = TRUE) {
+asinh.transform = function(x, cofactor = 5, jitter = TRUE) {
 
   # add a small amount of random noise to smooth things out at low vals
   if (jitter) {
@@ -32,7 +32,7 @@ asinh.transform = function(x, cofactor = 150, jitter = TRUE) {
   val
 }
 
-inv.asinh.transform = function(x, cofactor = 150) {
+inv.asinh.transform = function(x, cofactor = 5) {
   val = cofactor * sinh(x)
 
   val
@@ -51,7 +51,7 @@ inv.asinh.transform = function(x, cofactor = 150) {
 #' See \code{\link{biexpTransform}} for flowCore compatibility.
 #' @return A transformed flowFrame
 #' @export
-w.arcsinh <- function(ff, cofactor = 150, params) {
+w.arcsinh <- function(ff, cofactor = 5, params) {
 
   # if using symbolic names for params, convert to numeric
   if (is.character(params)) {
@@ -81,7 +81,7 @@ w.arcsinh <- function(ff, cofactor = 150, params) {
 #' @description This function performs the inverse arcsinh transform directly on ff.
 #' @return A transformed flowFrame
 #' @export
-w.inv.arcsinh <- function(ff, cofactor = 150, params) {
+w.inv.arcsinh <- function(ff, cofactor = 5, params) {
   # if using symbolic names for params, convert to numeric
   if (is.character(params)) {
     params <- which(colnames(ff) %in% params)
@@ -114,7 +114,7 @@ w.inv.arcsinh <- function(ff, cofactor = 150, params) {
 #' @description This function creates a flowCore compatible transform object.
 #' @return an object of type \code{transform}, to be used with flowCore functions.
 #' @export
-asinhTransform <- function (transformId = "myasinh", cofactor = 150, jitter = TRUE) {
+asinhTransform <- function (transformId = "myasinh", cofactor = 5, jitter = TRUE) {
   t <- new("transform", .Data = function (x) asinh.transform(x, cofactor, jitter))
   t@transformationId = transformId
   t
@@ -126,7 +126,7 @@ asinhTransform <- function (transformId = "myasinh", cofactor = 150, jitter = TR
 #' @return Transformed values.
 #' @seealso \code{\link{ibx}}
 #' @export
-asx = function(x, cofactor = 150) {
+asx = function(x, cofactor = 5) {
   idx = which(x == -Inf)
   res = asinh.transform(x, cofactor, jitter = FALSE)
   if  (length(idx) > 0) {
@@ -141,7 +141,7 @@ asx = function(x, cofactor = 150) {
 #' @return Transformed values.
 #' @seealso \code{\link{bx}}
 #' @export
-iasx = function(x, cofactor = 150) {
+iasx = function(x, cofactor = 5) {
   res = inv.asinh.transform(x, cofactor)
 
   res

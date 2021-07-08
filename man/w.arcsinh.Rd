@@ -4,7 +4,7 @@
 \alias{w.arcsinh}
 \title{Calculate a Arcsinh Transformation}
 \usage{
-w.arcsinh(ff, cofactor = 150, params)
+w.arcsinh(ff, cofactor = 5, params)
 }
 \arguments{
 \item{ff}{a flowFrame}

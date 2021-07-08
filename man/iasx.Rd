@@ -4,7 +4,7 @@
 \alias{iasx}
 \title{Shorthand Function for Inverse Arcsinh Transformation}
 \usage{
-iasx(x, cofactor = 150)
+iasx(x, cofactor = 5)
 }
 \arguments{
 \item{x}{A numeric scalar or vector to be transformed}

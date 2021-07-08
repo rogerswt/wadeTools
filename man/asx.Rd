@@ -4,7 +4,7 @@
 \alias{asx}
 \title{Shorthand Function for Arcsinh Transformation}
 \usage{
-asx(x, cofactor = 150)
+asx(x, cofactor = 5)
 }
 \arguments{
 \item{x}{A numeric scalar or vector to be transformed}
