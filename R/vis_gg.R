@@ -206,6 +206,15 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
     neg_major = -(10^(0:10))
     pos_major = 10^(0:10)
     major = c(neg_major, pos_major)
+    neg.ticks = vector(mode = 'numeric')
+    for (i in 1:(length(neg_major) - 1)) {
+      neg.ticks = c(neg.ticks, seq(neg_major[i], neg_major[i + 1], l = 10))
+    }
+    pos.ticks = vector(mode = 'numeric')
+    for (i in 1:(length(pos_major) - 1)) {
+      pos.ticks = c(pos.ticks, seq(pos_major[i], pos_major[i + 1], l = 10))
+    }
+    all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
     labels = gg_tick_labels(major)
     major = asx(major)
     all.ticks <- asx(all.ticks)

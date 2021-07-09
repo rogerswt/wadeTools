@@ -60,17 +60,17 @@ ax <- function (axis = 1, type = c("biexp", "asinh", "log", "linear"), max_chann
     for(i in 1:(length(major)-1)){
       all.ticks<-c(all.ticks,seq(major[i],major[i+1],l=10))
     }
-    all.ticks <- biexp.transform(all.ticks);
-    major     <- biexp.transform(major);
+    all.ticks <- bx(all.ticks);
+    major     <- bx(major);
   }
   if (type == "asinh") {
-    start_decade=2
+    start_decade=0
     major<-(10^(start_decade:decades))
     for(i in 1:(length(major)-1)){
       all.ticks<-c(all.ticks,seq(major[i],major[i+1],l=10))
     }
-    all.ticks <- asinh.transform(all.ticks);
-    major     <- asinh.transform(major);
+    all.ticks <- asx(all.ticks);
+    major     <- asx(major);
   }
   if (type == "linear") {
     axis (side=axis)
