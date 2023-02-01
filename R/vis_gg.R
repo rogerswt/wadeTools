@@ -210,7 +210,7 @@ ggflow = function(ff,
 #' # limit range of kde for plotting
 #' tmp = data.frame(kde_3)
 #' tmp = tmp[tmp$x > a$range[1] & tmp$x < a$range[2], ]
-#' p = ggplot(data.frame(kde_3), aes(x = x, y = y)) +
+#' p = ggplot(tmp, aes(x = x, y = y)) +
 #'          geom_path() + xlab("") + ylab("") +
 #'          labs(title = "CD3") +
 #'          theme(plot.title = element_text(size = 30, hjust = 0.5))
