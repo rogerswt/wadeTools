@@ -7,7 +7,7 @@
 ################################################################################
 #                     Copyright Still Pond Cytomis LLC 2020.                  ##
 #        All Rights Reserved. No part of this source code may be reproduced   ##
-#            without CytoVas' express written consent.                        ##
+#            without Still Pond Cytomics express written consent.             ##
 ################################################################################
 ################################################################################
 #
