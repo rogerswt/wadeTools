@@ -34,7 +34,8 @@ get_sample = function(fn, compensate = TRUE, transform = TRUE, derail = TRUE, ni
 
   requireNamespace("flowCore")
 
-  ff = suppressWarnings(read.FCS(fn, truncate_max_range = FALSE))  # changes resulting for upgrading to R4.0
+  ff = suppressWarnings(read.FCS(fn, truncate_max_range = FALSE,
+                                 truncate_max_range = FALSE))  # changes resulting for upgrading to flowCore 2.10.0
   if (verbose) {message("reading")}
   fl_params = which(flowCore::colnames(ff) %in% colnames(keyword(ff)$SPILL))
   sc_params = which(grepl(pattern = "FSC", x = flowCore::colnames(ff)) | grepl(pattern = "SSC", x = flowCore::colnames(ff)))
