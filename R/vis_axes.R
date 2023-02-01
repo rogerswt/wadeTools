@@ -6,12 +6,12 @@
 ################################################################################
 #                     Copyright Still Pond Cytomis LLC 2020.                  ##
 #        All Rights Reserved. No part of this source code may be reproduced   ##
-#            without CytoVas' express written consent.                        ##
+#            without Still Pond Cytomics express written consent.             ##
 ################################################################################
 ################################################################################
 #
 
-#' @title Draw Pretty Axes
+#' @title Draw Pretty Axes (legacy base graphics)
 #' @description Draw axes for biexp, log or linear transformations.
 #' @param axis Which axis to draw (1 = x, 2 = y)
 #' @param type Type of transformation (one of \code{"biexp", "log", "linear"})
@@ -32,7 +32,7 @@
 #' ax(axis = 1, type = 'biexp')
 #' ax(axis = 2, type = 'log')
 #' @export
-ax <- function (axis = 1, type = c("biexp", "asinh", "log", "linear"), max_channel = 262143, ticksize = 2, ...) {
+ax <- function (axis = 1, type = c("biexp", "asinh", "log", "linear", "none"), max_channel = 262143, ticksize = 2, ...) {
 
   type       = match.arg(type)
 
@@ -72,7 +72,7 @@ ax <- function (axis = 1, type = c("biexp", "asinh", "log", "linear"), max_chann
     all.ticks <- asx(all.ticks);
     major     <- asx(major);
   }
-  if (type == "linear") {
+  if (type == "linear" | type == "none") {
     axis (side=axis)
     return()
   }

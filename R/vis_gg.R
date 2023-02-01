@@ -7,7 +7,7 @@
 ################################################################################
 #                     Copyright Still Pond Cytomics LLC 2020.                 ##
 #        All Rights Reserved. No part of this source code may be reproduced   ##
-#            without CytoVas' express written consent.                        ##
+#            without Still Pond Cytomics express written consent.             ##
 ################################################################################
 ################################################################################
 #
@@ -178,6 +178,35 @@ ggflow = function(ff,
   return(p)
 }
 
+#' @title Support for ggplot-style axis labeling
+#' @description Placing tick marks and labels appropriate for several popular transformations.
+#' @param ff The flowFrame to be plotted
+#' @param param The parameter of ff to be plotted
+#' @param method The transformation that was applied to the scattering parameters of ff.
+#' Currently, one of c("linear", "biexp", "asinh", "log", "linear").
+#' @return A list comprised of:
+#'            major = vector of locations of major ticks
+#'            ticks = vector of locations of minor ticks
+#'            labels = vector of major tick labels
+#'            range = vector of length 2, indicating min and max of range.  Default values
+#'            can be overridden if desired.
+#' @description This function provides support for ggplot style axis generation.
+#' It is used in ggflow(), but sometimes you want to make custom plots that respect
+#' the transformation you've used on your data.
+#'
+#' @examples
+#'
+#' # get some example data
+#' filename = system.file("extdata", "example1.fcs", package = "wadeTools")
+#' ff = get_sample(filename)
+#' # Recall that get_sample by default applies linear transformation to scattering
+#' # parameters and biexponential transformation to fluorescence parameters.
+#'
+#' a = ticks_breaks_labels(ff, param = "CD3Q605")
+#'
+#' # finish this
+#'
+#' @export
 ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "linear")) {
   method = match.arg(method)
 
