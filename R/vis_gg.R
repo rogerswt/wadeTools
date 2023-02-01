@@ -213,7 +213,7 @@ ggflow = function(ff,
 #' p = ggplot(tmp, aes(x = x, y = y)) +
 #'          geom_path() + xlab("") + ylab("") +
 #'          labs(title = "CD3") +
-#'          theme(plot.title = element_text(size = 30, hjust = 0.5))
+#'          theme(plot.title = element_text(size = 30, hjust = 0.5), axis.text = element_text(size = 20))
 #' xax = scale_x_continuous(breaks = a$major, limits = a$range, minor_breaks = a$ticks, labels = a$labels)
 #' p + xax
 #'
