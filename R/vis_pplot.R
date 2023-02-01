@@ -64,6 +64,8 @@ pplot <- function (ff, parameters, blueBackground=FALSE, showZero=FALSE, nbin=50
   }
 
   if(plotaxt==TRUE){
+    tx = match.arg(tx)
+    ty = match.arg(ty)
     suppressWarnings (ax (1, max_channel = max_channel, type=tx, ticksize=ticksize))
     suppressWarnings (ax (2, max_channel = max_channel, type=ty, ticksize=ticksize))
   }

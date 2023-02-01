@@ -2,11 +2,11 @@
 % Please edit documentation in R/vis_axes.R
 \name{ax}
 \alias{ax}
-\title{Draw Pretty Axes}
+\title{Draw Pretty Axes (legacy base graphics)}
 \usage{
 ax(
   axis = 1,
-  type = c("biexp", "asinh", "log", "linear"),
+  type = c("biexp", "asinh", "log", "linear", "none"),
   max_channel = 262143,
   ticksize = 2,
   ...

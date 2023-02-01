@@ -204,7 +204,19 @@ ggflow = function(ff,
 #'
 #' a = ticks_breaks_labels(ff, param = "CD3Q605")
 #'
-#' # finish this
+#' # make a plot of a kernel density estimate of a univariate parameter
+#' kde_3 = normalize.kde(bkde(exprs(ff)[,"CD3Q605"], band = 0.1, grid = 1001))
+#'
+#' # limit range of kde for plotting
+#' tmp = data.frame(kde_3)
+#' tmp = tmp[tmp$x > a$range[1] & tmp$x < a$range[2], ]
+#' p = ggplot(data.frame(kde_3), aes(x = x, y = y)) +
+#'          geom_path() + xlab("") + ylab("") +
+#'          labs(title = "CD3") +
+#'          theme(plot.title = element_text(size = 30, hjust = 0.5))
+#' xax = scale_x_continuous(breaks = a$major, limits = a$range, minor_breaks = a$ticks, labels = a$labels)
+#' p + xax
+#'
 #'
 #' @export
 ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "linear")) {

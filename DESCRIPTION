@@ -20,7 +20,7 @@ Depends:
     fields,
     flowFP,
     ggplot2
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Imports: 
     splus2R, 
     sp, 
