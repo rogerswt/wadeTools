@@ -26,5 +26,5 @@ Imports:
     sp, 
     lattice,
     methods
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, xfun, sp, viridis
 VignetteBuilder: knitr
