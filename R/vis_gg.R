@@ -244,26 +244,35 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
     all.ticks <- bx(all.ticks)
     range = c(bx(-200), bx(2^18))
   } else if (method == "asinh") {
-    neg_major = -(10^(0:10))
-    pos_major = 10^(0:10)
-    major = c(neg_major, pos_major)
-    neg.ticks = vector(mode = 'numeric')
-    for (i in 1:(length(neg_major) - 1)) {
-      neg.ticks = c(neg.ticks, seq(neg_major[i], neg_major[i + 1], l = 10))
-    }
-    pos.ticks = vector(mode = 'numeric')
-    for (i in 1:(length(pos_major) - 1)) {
-      pos.ticks = c(pos.ticks, seq(pos_major[i], pos_major[i + 1], l = 10))
-    }
-    all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
+    # neg_major = -(10^(0:10))
+    # pos_major = 10^(0:10)
+    # major = c(neg_major, pos_major)
+    # neg.ticks = vector(mode = 'numeric')
+    # for (i in 1:(length(neg_major) - 1)) {
+    #   neg.ticks = c(neg.ticks, seq(neg_major[i], neg_major[i + 1], l = 10))
+    # }
+    # pos.ticks = vector(mode = 'numeric')
+    # for (i in 1:(length(pos_major) - 1)) {
+    #   pos.ticks = c(pos.ticks, seq(pos_major[i], pos_major[i + 1], l = 10))
+    # }
+    # all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
+    # labels = gg_tick_labels(major)
+    # major = asx(major)
+    # all.ticks <- asx(all.ticks)
+    # range = c(asx(0), asx(2^14))
     labels = gg_tick_labels(major)
     major = asx(major)
     all.ticks <- asx(all.ticks)
-    range = c(asx(0), asx(2^14))
+    range = c(asx(-200), asx(2^18))
   } else if (method == "log") {
+    major = 10^(0:10)
     labels = gg_tick_labels(major)
+    all.ticks = vector(mode = 'numeric')
+    for (i in 1:(length(major) - 1)) {
+      all.ticks = c(all.ticks, seq(major[i], major[i + 1], l = 10))
+    }
     major = log10(major)
-    all.ticks <- log10(all.ticks)
+    all.ticks <- sort(log10(all.ticks))
     range = c(log10(1), log10(2^18))
   } else if (method == 'linear') {
     idx = which(exprs(ff)[, param] >= 0)
@@ -275,3 +284,5 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
   }
   return(list(major = major, ticks = all.ticks, labels = labels, range = range))
 }
+
+# helper function
