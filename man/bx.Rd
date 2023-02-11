@@ -4,7 +4,7 @@
 \alias{bx}
 \title{Shorthand Function for Biexponential Transformation}
 \usage{
-bx(x)
+bx(x, a = 0.002)
 }
 \arguments{
 \item{x}{A numeric scalar or vector to be transformed}

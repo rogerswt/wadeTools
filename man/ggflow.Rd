@@ -11,6 +11,8 @@ ggflow(
   resolution = c("medium", "very_coarse", "coarse", "fine"),
   trans_sc = c("linear", "biexp", "asinh", "log"),
   trans_fl = c("biexp", "asinh", "log", "linear"),
+  a = 0.002,
+  cofactor = 5,
   indicate_zero = TRUE,
   xlim = NULL,
   ylim = NULL
@@ -31,6 +33,10 @@ Currently, one of c("linear", "biexp", "asinh", "log").}
 
 \item{trans_fl}{The transformation that was applied to the fluorescence parameters of ff.
 Currently, one of c("linear", "biexp", "asinh", "log").}
+
+\item{a}{Adjustable parameter "a" for the biexp transformation.  Default = 0.002.}
+
+\item{cofactor}{Adjustable parameter "cofactor" for asinh transformation.  Default = 5.}
 
 \item{indicate_zero}{Boolean, should we indicate the location of 0?}
 

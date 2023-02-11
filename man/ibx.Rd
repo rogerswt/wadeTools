@@ -4,7 +4,7 @@
 \alias{ibx}
 \title{Shorthand Function for Inverse Biexponential Transformation}
 \usage{
-ibx(x)
+ibx(x, a = 0.002)
 }
 \arguments{
 \item{x}{A numeric scalar or vector to be transformed}

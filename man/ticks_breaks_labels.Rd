@@ -4,7 +4,13 @@
 \alias{ticks_breaks_labels}
 \title{Support for ggplot-style axis labeling}
 \usage{
-ticks_breaks_labels(ff, param, method = c("biexp", "asinh", "log", "linear"))
+ticks_breaks_labels(
+  ff,
+  param,
+  method = c("biexp", "asinh", "log", "linear"),
+  a = 0.002,
+  cofactor = 5
+)
 }
 \arguments{
 \item{ff}{The flowFrame to be plotted}
@@ -48,7 +54,7 @@ tmp = tmp[tmp$x > a$range[1] & tmp$x < a$range[2], ]
 p = ggplot(tmp, aes(x = x, y = y)) +
          geom_path() + xlab("") + ylab("") +
          labs(title = "CD3") +
-         theme(plot.title = element_text(size = 30, hjust = 0.5))
+         theme(plot.title = element_text(size = 30, hjust = 0.5), axis.text = element_text(size = 20))
 xax = scale_x_continuous(breaks = a$major, limits = a$range, minor_breaks = a$ticks, labels = a$labels)
 p + xax
 

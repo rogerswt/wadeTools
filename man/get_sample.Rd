@@ -7,7 +7,11 @@
 get_sample(
   fn,
   compensate = TRUE,
+  spill_matrix = NULL,
   transform = TRUE,
+  transform.method = c("biexp", "asinh", "log"),
+  a = 0.002,
+  cofactor = 5,
   derail = TRUE,
   nice.names = TRUE,
   verbose = FALSE
@@ -16,10 +20,27 @@ get_sample(
 \arguments{
 \item{fn}{The fully qualified FCS filename}
 
-\item{compensate}{Logical, apply the internal compensation matrix}
+\item{compensate}{Logical, apply compensation}
+
+\item{spill_matrix}{Default NULL applies the SPILL matrix provided in the header
+of the input file.  Provide a SPILL matrix of your own, if desired.  Be careful
+that the column labels are consistent with the parameter labeling in the
+corresponding input file.}
 
 \item{transform}{Logical, apply linear transformation to scattering parameters
-and biexponential transformation to fluorescence parameters}
+and biexponential transformation to fluorescence parameters.  If TRUE, transform.method
+specifies which non-linear transformation and its associated adjustable parameter
+(e.g. a, cofactor) is to be applied to non-scattering (e.g. fluorescence)
+parameters, in which case.  See documentation for \code{doTransform} for further
+details.}
+
+\item{transform.method}{Non-linear method to be applied.  Default = biexp.}
+
+\item{a}{The adjustable parameter for the biexp transformation (ignored unless
+transform.method = biexp)}
+
+\item{cofactor}{The adjustable parameter for the asinh transformation (ignored
+unless transform.method = asinh)}
 
 \item{derail}{Logical, get rid of events on the FSC-A and SSC-A positive axes}
 

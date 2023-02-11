@@ -8,6 +8,8 @@ iasx(x, cofactor = 5)
 }
 \arguments{
 \item{x}{A numeric scalar or vector to be transformed}
+
+\item{cofactor}{Adjustable parameter. Default = 5}
 }
 \value{
 Transformed values.

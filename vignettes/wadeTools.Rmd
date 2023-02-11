@@ -117,10 +117,10 @@ ff2 = get_sample(filename, transform.method = 'asinh')     # uses the asinh tran
 ff3 = get_sample(filename, transform.method = 'log')       # uses the log transform, but warnings related to negative values
 ff4 = get_sample(filename, transform.method = 'asinh', cofactor = 100)   # asinh, but overriding the default cofactor
 
-ggflow(ff1, params = c("CD3Q605","CD4PETR")) + ggtitle("Default Transformation")
-ggflow(ff2, params = c("CD3Q605","CD4PETR"), trans_fl = "asinh") + ggtitle("asinh Transformation w/ cofactor = 5")
-ggflow(ff3, params = c("CD3Q605","CD4PETR"), trans_fl = 'log') + ggtitle("Log Transformation")
-ggflow(ff4, params = c("CD3Q605","CD4PETR"), trans_fl = 'asinh', cofactor = 100) + ggtitle("asinh Transformation w/ cofactor = 100")
+ggflow(ff1, params = c("CD3Q605","CD4PETR")) + ggtitle("Default Transformation")  + theme(plot.title = element_text(size = 10))
+ggflow(ff2, params = c("CD3Q605","CD4PETR"), trans_fl = "asinh") + ggtitle("asinh Transformation w/ cofactor = 5") + theme(plot.title = element_text(size = 10))
+ggflow(ff3, params = c("CD3Q605","CD4PETR"), trans_fl = 'log') + ggtitle("Log Transformation") + theme(plot.title = element_text(size = 10))
+ggflow(ff4, params = c("CD3Q605","CD4PETR"), trans_fl = 'asinh', cofactor = 100) + ggtitle("asinh Transformation w/ cofactor = 100") + theme(plot.title = element_text(size = 10))
 ```
 Note that it's your responsibility to be consistent in how you've transformed your data (in get_sample()) and in how you visualize your data (in ggflow()).
 

@@ -8,6 +8,8 @@ doTransform(
   ff,
   cols = c(1:5, 7:13),
   method = c("biexp", "asinh", "log", "linear"),
+  a = 0.002,
+  cofactor = 5,
   fac = 5.4/262143
 )
 }
@@ -18,6 +20,10 @@ doTransform(
 
 \item{method}{The transformation function. One of \code{biexp}, \code{log} or \code{linear}.}
 
+\item{a}{The adjustable parameter for Wade's biexpTransform (Default = 0.002)}
+
+\item{cofactor}{The adjustable parameter for Wade's asinhTransform (Default = 5)}
+
 \item{fac}{The scaling factor used only for \code{method = 'linear'}.}
 }
 \value{
@@ -27,7 +33,8 @@ The transformed flowFrame.
 Convenience wrapper for \code{\link[flowCore]{transformList}} and \code{\link[flowCore]{transform}}.
 }
 \details{
-Please refer to the code for the math details.  The biexp method is specific to this
-package.  It's similar to other biexponential transforms (e.g. flowCore, FlowJo) but differs
-in detail.
+Please refer to the code for the math details.  The biexp and asinh methods are specific to this
+package.  They're similar to other corresponding transforms (e.g. flowCore, FlowJo) but differ
+in detail.  The values of the two adjustable transformation parameters
+\code{a} and \code{cofactor} are only applicable to their corresponding transforms.
 }
