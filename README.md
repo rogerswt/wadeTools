@@ -22,7 +22,7 @@ I've only recently turned this collection into a formal R package.  Why?  Becaus
 That said, anyone is free to grab this package and use it, if you find it useful in your work.  If you do, please drop me a note!  If you use it in a publication, please acknowledge.
 
 ### All
-The current version, 0.2.0, is pre-alpha.  There are likely to be bugs.  I would **very much appreciate** any bug reports!  Email below.
+The current version, 0.3.2, is pre-alpha.  There are likely to be bugs.  I would **very much appreciate** any bug reports!  Email below.
 
 Cheers,
 Wade
