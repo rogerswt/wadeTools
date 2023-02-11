@@ -104,6 +104,27 @@ Compare the two sets of figures and you'll notice that the labeling of fluoresce
 
 So, not only is the **wadeTools** approach much simpler from a code perspective, the result is quite a bit nicer (IMHO).
 
+### Adding flexibility to get_sample()
+As of version 0.3.2 of wadeTools, we've added some flexibility to get_sample().  
+
+First, whereas before if you wanted to perform compensation you were limited to using the internal spillover matrix in the header of the FCS file you specified.  Now, you can add your own spillover matrix, but get_sample() will default to the internal matrix if you don't.
+
+Second, you may now specify which transformation to use on your fluorscence channels (or more precisely, the "non-scattering" channels).  Previously, get_sample() was hard-wired to apply the wadeTools::biexpTransform method and was restricted to using the  adjustable parameter "a" set to the default value 0.002.  Now, you can change this value, or switch to other non-linear transformations "asinh" or "log". In the case of asinh, you can keep the default cofactor value of 5, or specify a different value.  The log transformation has no adjustable values like "a" or "cofactor", but you'll notice warnings which result from dropping negative or zero values.  Here's an illustration.
+
+```{r, eval = TRUE, echo = TRUE, fig.show='hold'}
+ff1 = get_sample(filename)     # uses the default biexp transform with the default a = 0.002
+ff2 = get_sample(filename, transform.method = 'asinh')     # uses the asinh transform with default cofactor = 5
+ff3 = get_sample(filename, transform.method = 'log')       # uses the log transform, but warnings related to negative values
+ff4 = get_sample(filename, transform.method = 'asinh', cofactor = 100)   # asinh, but overriding the default cofactor
+
+ggflow(ff1, params = c("CD3Q605","CD4PETR")) + ggtitle("Default Transformation")
+ggflow(ff2, params = c("CD3Q605","CD4PETR"), trans_fl = "asinh") + ggtitle("asinh Transformation w/ cofactor = 5")
+ggflow(ff3, params = c("CD3Q605","CD4PETR"), trans_fl = 'log') + ggtitle("Log Transformation")
+ggflow(ff4, params = c("CD3Q605","CD4PETR"), trans_fl = 'asinh', cofactor = 100) + ggtitle("asinh Transformation w/ cofactor = 100")
+```
+Note that it's your responsibility to be consistent in how you've transformed your data (in get_sample()) and in how you visualize your data (in ggflow()).
+
+
 ## Next: a simple pre-gating task 
 It is often (always?) the case that raw data needs to be pre-gated prior to *any* sophisticated computational analysis.  For example, we're *never* interested in dead cells, or doublet events.  We often include dump markers to exclude cells that aren't the ones we're targeting. It's important to get rid of the junk so that it doesn't bias or confuse downstream algorithms (being careful not to throw out the baby with the bath water!). Thus, even though we'd like to think that gating is a thing of the past, it's not.
 
