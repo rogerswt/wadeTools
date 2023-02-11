@@ -17,9 +17,22 @@
 #' removal of 'rail' events, and apply some parameter renaming for convenience
 #' and nice pictures.
 #' @param fn The fully qualified FCS filename
-#' @param compensate Logical, apply the internal compensation matrix
+#' @param compensate Logical, apply compensation
+#' @param spill_matrix Default NULL applies the SPILL matrix provided in the header
+#' of the input file.  Provide a SPILL matrix of your own, if desired.  Be careful
+#' that the column labels are consistent with the parameter labeling in the
+#' corresponding input file.
 #' @param transform Logical, apply linear transformation to scattering parameters
-#' and biexponential transformation to fluorescence parameters
+#' and biexponential transformation to fluorescence parameters.  If TRUE, transform.method
+#' specifies which non-linear transformation and its associated adjustable parameter
+#' (e.g. a, cofactor) is to be applied to non-scattering (e.g. fluorescence)
+#' parameters, in which case.  See documentation for \code{doTransform} for further
+#' details.
+#' @param transform.method Non-linear method to be applied.  Default = biexp.
+#' @param a The adjustable parameter for the biexp transformation (ignored unless
+#' transform.method = biexp)
+#' @param cofactor The adjustable parameter for the asinh transformation (ignored
+#' unless transform.method = asinh)
 #' @param derail Logical, get rid of events on the FSC-A and SSC-A positive axes
 #' @param nice.names Logical, swap 'desc' for 'name' in the flowFrame
 #' @param verbose Logical, report progress on the console
@@ -29,7 +42,10 @@
 #' us avoid mistakes.
 #' @return A flowFrame, properly processed.
 #' @export
-get_sample = function(fn, compensate = TRUE, transform = TRUE, derail = TRUE, nice.names = TRUE, verbose = FALSE) {
+get_sample = function(fn, compensate = TRUE, spill_matrix = NULL,
+                      transform = TRUE, transform.method = c("biexp", "asinh", "log"), a = 0.002, cofactor = 5,
+                      derail = TRUE,
+                      nice.names = TRUE, verbose = FALSE) {
 
 
   requireNamespace("flowCore")
@@ -39,16 +55,24 @@ get_sample = function(fn, compensate = TRUE, transform = TRUE, derail = TRUE, ni
   fl_params = which(flowCore::colnames(ff) %in% colnames(keyword(ff)$SPILL))
   sc_params = which(grepl(pattern = "FSC", x = flowCore::colnames(ff)) | grepl(pattern = "SSC", x = flowCore::colnames(ff)))
 
-  if (compensate) {if (verbose) {message("compensating")}; ff = autocomp(ff)}
+  if (compensate) {
+    if (verbose) {message("compensating")}
+    if (is.null(spill_matrix)) {
+      ff = autocomp(ff)
+    } else {
+      ff = flowCore::compensate(ff, spillover = spill_matrix)
+    }
+  }
 
   if (derail) {
     if (verbose) {message("derailing")}
     ff = derail(ff = ff, parameters = c("FSC-A", "SSC-A"))
   }
   if (transform) {
+    transform.method = match.arg(transform.method)
     if (verbose) {message("transforming")}
     ff = doTransform(ff, cols = sc_params, method = 'linear')
-    ff = doTransform(ff, cols = fl_params, method = 'biexp')
+    ff = doTransform(ff, cols = fl_params, method = transform.method, a = a, cofactor = cofactor)
   }
   if (nice.names) {
     if (verbose) {message("nice names")}
@@ -69,25 +93,30 @@ get_sample = function(fn, compensate = TRUE, transform = TRUE, derail = TRUE, ni
 #' @param ff The flowFrame to be transformed
 #' @param cols The columns (parameters) of the flowFrame to be transformed
 #' @param method The transformation function. One of \code{biexp}, \code{log} or \code{linear}.
+#' @param a The adjustable parameter for Wade's biexpTransform (Default = 0.002)
+#' @param cofactor The adjustable parameter for Wade's asinhTransform (Default = 5)
 #' @param fac The scaling factor used only for \code{method = 'linear'}.
-#' @details Please refer to the code for the math details.  The biexp method is specific to this
-#' package.  It's similar to other biexponential transforms (e.g. flowCore, FlowJo) but differs
-#' in detail.
+#' @details Please refer to the code for the math details.  The biexp and asinh methods are specific to this
+#' package.  They're similar to other corresponding transforms (e.g. flowCore, FlowJo) but differ
+#' in detail.  The values of the two adjustable transformation parameters
+#' \code{a} and \code{cofactor} are only applicable to their corresponding transforms.
+#'
 #' @return The transformed flowFrame.
 #' @export
-doTransform <- function(ff,cols = c(1:5, 7:13),method = c("biexp", "asinh", "log","linear"), fac = 5.4/262143) {
+doTransform <- function(ff, cols = c(1:5, 7:13), method = c("biexp", "asinh", "log", "linear"),
+                        a = 0.002, cofactor = 5, fac = 5.4/262143) {
 
   requireNamespace("flowCore")
 
   if (is(ff,"flowFrame")) {
     method = match.arg(method)
     if (method == "biexp") {
-      bx <- biexpTransform(jitter = F)
+      bx <- wadeTools::biexpTransform(a = a, jitter = F)
       bxlist <- transformList(flowCore::colnames(ff)[cols], bx)
       return(flowCore::transform(ff, bxlist))
     }
     if (method == "asinh") {
-      lx <- wadeTools::asinhTransform()
+      lx <- wadeTools::asinhTransform(cofactor = cofactor, jitter = F)
       lxlist <- transformList(flowCore::colnames(ff)[cols], lx)
       return(flowCore::transform(ff, lxlist))
     }
