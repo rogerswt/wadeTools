@@ -123,6 +123,7 @@ asinhTransform <- function (transformId = "myasinh", cofactor = 5, jitter = TRUE
 #' @title Shorthand Function for Arcsinh Transformation
 #' @description A shorthand function to perform the arcsinh transform on numeric values
 #' @param x A numeric scalar or vector to be transformed
+#' @param cofactor Adjustable parameter. Default = 5.
 #' @return Transformed values.
 #' @seealso \code{\link{ibx}}
 #' @export
@@ -138,6 +139,7 @@ asx = function(x, cofactor = 5) {
 #' @title Shorthand Function for Inverse Arcsinh Transformation
 #' @description A shorthand function to perform the inverse arcsinh transform on numeric values
 #' @param x A numeric scalar or vector to be transformed
+#' @param cofactor Adjustable parameter. Default = 5
 #' @return Transformed values.
 #' @seealso \code{\link{bx}}
 #' @export

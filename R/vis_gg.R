@@ -23,6 +23,8 @@
 #' Currently, one of c("linear", "biexp", "asinh", "log").
 #' @param trans_fl The transformation that was applied to the fluorescence parameters of ff.
 #' Currently, one of c("linear", "biexp", "asinh", "log").
+#' @param a Adjustable parameter "a" for the biexp transformation.  Default = 0.002.
+#' @param cofactor Adjustable parameter "cofactor" for asinh transformation.  Default = 5.
 #' @param indicate_zero Boolean, should we indicate the location of 0?
 #' @param xlim The limits of the plot in the x direction. NULL will apply sensible defaults.
 #' @param ylim The limits of the plot in the y direction. NULL will apply sensible defaults.
@@ -87,6 +89,7 @@ ggflow = function(ff,
                   resolution = c("medium", "very_coarse","coarse", "fine"),
                   trans_sc = c("linear", "biexp", "asinh", "log"),
                   trans_fl = c("biexp", "asinh", "log", "linear"),
+                  a = 0.002, cofactor = 5,
                   indicate_zero = TRUE,
                   xlim = NULL, ylim = NULL) {
   requireNamespace("ggplot2")
@@ -143,13 +146,13 @@ ggflow = function(ff,
   } else {
     method = trans_fl
   }
-  a = ticks_breaks_labels(ff, params[1], method = method)
+  dec = ticks_breaks_labels(ff, params[1], method = method, a = a, cofactor = cofactor)
   if (is.null(xlim)) {
-    limits = a$range
+    limits = dec$range
   } else {
     limits = xlim
   }
-  p = p + scale_x_continuous(breaks = a$major, limits = limits, minor_breaks = a$ticks, labels = a$labels)
+  p = p + scale_x_continuous(breaks = dec$major, limits = limits, minor_breaks = dec$ticks, labels = dec$labels)
 
 
   # y axis
@@ -158,13 +161,13 @@ ggflow = function(ff,
   } else {
     method = trans_fl
   }
-  a = ticks_breaks_labels(ff, params[2], method = method)
+  dec = ticks_breaks_labels(ff, params[2], method = method, a = a, cofactor = cofactor)
   if (is.null(ylim)) {
-    limits = a$range
+    limits = dec$range
   } else {
     limits = ylim
   }
-  p = p + scale_y_continuous(breaks = a$major, limits = limits, minor_breaks = a$ticks, labels = a$labels)
+  p = p + scale_y_continuous(breaks = dec$major, limits = limits, minor_breaks = dec$ticks, labels = dec$labels)
 
 
   # Choose a color mapping
@@ -219,7 +222,7 @@ ggflow = function(ff,
 #'
 #'
 #' @export
-ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "linear")) {
+ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "linear"), a = 0.002, cofactor = 5) {
   method = match.arg(method)
 
   neg_major = -(10^(2:10))
@@ -240,30 +243,14 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
   all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
   if (method == "biexp") {
     labels = gg_tick_labels(major)
-    major = bx(major)
+    major = bx(major, a = a)
     all.ticks <- bx(all.ticks)
-    range = c(bx(-200), bx(2^18))
+    range = c(bx(-200, a = a), bx(2^18, a = a))
   } else if (method == "asinh") {
-    # neg_major = -(10^(0:10))
-    # pos_major = 10^(0:10)
-    # major = c(neg_major, pos_major)
-    # neg.ticks = vector(mode = 'numeric')
-    # for (i in 1:(length(neg_major) - 1)) {
-    #   neg.ticks = c(neg.ticks, seq(neg_major[i], neg_major[i + 1], l = 10))
-    # }
-    # pos.ticks = vector(mode = 'numeric')
-    # for (i in 1:(length(pos_major) - 1)) {
-    #   pos.ticks = c(pos.ticks, seq(pos_major[i], pos_major[i + 1], l = 10))
-    # }
-    # all.ticks = sort(unique(c(neg.ticks, pos.ticks)))
-    # labels = gg_tick_labels(major)
-    # major = asx(major)
-    # all.ticks <- asx(all.ticks)
-    # range = c(asx(0), asx(2^14))
     labels = gg_tick_labels(major)
-    major = asx(major)
-    all.ticks <- asx(all.ticks)
-    range = c(asx(-200), asx(2^18))
+    major = asx(major, cofactor = cofactor)
+    all.ticks <- asx(all.ticks, cofactor = cofactor)
+    range = c(asx(-200, cofactor), asx(2^18, cofactor))
   } else if (method == "log") {
     major = 10^(0:10)
     labels = gg_tick_labels(major)
@@ -285,4 +272,4 @@ ticks_breaks_labels = function(ff, param, method = c("biexp", "asinh", "log", "l
   return(list(major = major, ticks = all.ticks, labels = labels, range = range))
 }
 
-# helper function
+

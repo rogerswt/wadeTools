@@ -152,9 +152,9 @@ biexpTransform <- function (transformId = "mybiexp", a = 0.002, full_scale = 262
 #' @return Transformed values.
 #' @seealso \code{\link{ibx}}
 #' @export
-bx = function(x) {
+bx = function(x, a = 0.002) {
   idx = which(x == -Inf)
-  res = biexp.transform(x, jitter = FALSE)
+  res = biexp.transform(x, a = a, jitter = FALSE)
   if  (length(idx) > 0) {
     res[idx] = -Inf
   }
@@ -167,8 +167,8 @@ bx = function(x) {
 #' @return Transformed values.
 #' @seealso \code{\link{bx}}
 #' @export
-ibx = function(x) {
-  res = inv.biexp.transform(x)
+ibx = function(x, a = 0.002) {
+  res = inv.biexp.transform(x, a = a)
 
   res
 }
